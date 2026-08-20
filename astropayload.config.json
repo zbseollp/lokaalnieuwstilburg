@@ -1,7 +1,9 @@
 {
   "version": 1,
   "tenantSlug": "lokaalnieuwstilburg",
-  "modules": ["blog"],
+  "modules": [
+    "blog"
+  ],
   "blogContentPath": "src/content/blog",
   "blogFileExtension": "md"
 }
