@@ -1,0 +1,159 @@
+﻿---
+import { getCollection, render } from "astro:content";
+import ArticleLayout from "../layouts/ArticleLayout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import bedrijven from "../data/bedrijven.json";
+
+function makeSlug(str: string): string {
+  if (!str) return 'onbekend';
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'onbekend';
+}
+
+export async function getStaticPaths() {
+  function ms(str: string): string {
+    if (!str) return 'onbekend';
+    return str.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/['"]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'onbekend';
+  }
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const blogPaths = posts.map(post => ({
+    params: { slug: post.id },
+    props: { type: 'blog' as const, post, bedrijf: null },
+  }));
+  const seen = new Map<string, number>();
+  const bedrijfPaths = (bedrijven as any[]).map((b) => {
+    const base = ms(b.title);
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    const slug = count === 0 ? base : `${base}-${count + 1}`;
+    return { params: { slug }, props: { type: 'bedrijf' as const, bedrijf: b, post: null } };
+  });
+  return [...blogPaths, ...bedrijfPaths];
+}
+
+const { type, post, bedrijf } = Astro.props;
+let Content: any = null;
+if (type === 'blog' && post) {
+  ({ Content } = await render(post));
+}
+const b = bedrijf;
+const adres = b ? [b.street, b.city].filter(Boolean).join(', ') : '';
+const tel = b?.phone ? b.phone.replace(/^31\s?/, '0').replace(/\s/g, '') : null;
+const telDisplay = b?.phone ? b.phone.replace(/^31\s?/, '0') : null;
+---
+{type === 'blog' && post && (
+  <ArticleLayout
+    title={post.data.title}
+    description={post.data.description}
+    pubDate={post.data.pubDate}
+    category={post.data.category}
+    author={post.data.author}
+    heroImage={post.data.heroImage}
+  >
+    <Content />
+  </ArticleLayout>
+)}
+{type === 'bedrijf' && b && (
+  <BaseLayout
+    title={`${b.title} - ${b.category} in ${b.city || 'Tilburg'}`}
+    description={`Informatie over ${b.title}, ${b.category.toLowerCase()} in ${b.city || 'Tilburg'}. Adres, telefoonnummer en website.`}
+  >
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="/">Home</a><span>/</span>
+        <a href="/bedrijvengids/">Bedrijvengids</a><span>/</span>
+        <span>{b.title}</span>
+      </nav>
+      <div class="page-layout">
+        <main>
+          <span class="cat-badge">{b.category}</span>
+          <h1>{b.title}</h1>
+          <div class="info-card">
+            {adres && (
+              <div class="info-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                <span>{adres}</span>
+              </div>
+            )}
+            {tel && (
+              <div class="info-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.55 8.1a19.79 19.79 0 01-3.07-8.7A2 2 0 012.45 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                <a href={`tel:${tel}`}>{telDisplay}</a>
+              </div>
+            )}
+            {b.website && (
+              <div class="info-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                <a href={b.website} target="_blank" rel="noopener noreferrer">{b.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
+              </div>
+            )}
+          </div>
+          <div class="cta-row">
+            {b.mapsUrl && <a href={b.mapsUrl} target="_blank" rel="noopener" class="btn-map">Bekijk op kaart</a>}
+            {b.website && <a href={b.website} target="_blank" rel="noopener" class="btn-website">Naar website</a>}
+          </div>
+          <div class="tekst-blok">
+            <h2>{b.category} in {b.city || 'Tilburg'}</h2>
+            <p>{b.title} is een {b.category.toLowerCase()} gevestigd in {b.city || 'Tilburg'}. Via de bedrijvengids van Lokaal Nieuws Tilburg vindt u snel de contactgegevens en verdere informatie over dit bedrijf.</p>
+            <p>Staat u zelf in de {b.category.toLowerCase()}-sector en wilt u uw bedrijf toevoegen of bijwerken? <a href="/contact/">Neem contact op</a> met de redactie.</p>
+          </div>
+        </main>
+        <aside>
+          <div class="aside-blok">
+            <h3>Bedrijvengids</h3>
+            <p>Bekijk alle bedrijven in Tilburg per categorie.</p>
+            <a href="/bedrijvengids/" class="btn-cta">Naar bedrijvengids</a>
+          </div>
+          <div class="aside-blok">
+            <h3>Meer {b.category}</h3>
+            <a href={`/bedrijvengids/#${makeSlug(b.category)}`} class="btn-cta btn-outline">Alle {b.category.toLowerCase()}s</a>
+          </div>
+          <div class="aside-blok">
+            <h3>Lokaal nieuws</h3>
+            <p>Blijf op de hoogte van het laatste nieuws uit Tilburg.</p>
+            <a href="/blog/" class="btn-cta btn-outline">Lees nieuws</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </BaseLayout>
+)}
+<style>
+.container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.breadcrumb { display: flex; gap: .5rem; font-size: .8rem; color: var(--color-muted); margin-bottom: 1.5rem; flex-wrap: wrap; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+.page-layout { display: grid; grid-template-columns: 1fr 260px; gap: 2.5rem; align-items: start; }
+.cat-badge { display: inline-block; background: var(--color-brand); color: #111; font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: .2rem .65rem; border-radius: 3px; margin-bottom: .75rem; }
+h1 { font-size: 2rem; font-weight: 800; margin: 0 0 1.5rem; }
+.info-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: .875rem; }
+.info-row { display: flex; align-items: center; gap: .75rem; font-size: .9rem; }
+.info-row svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--color-brand); }
+.info-row a { color: var(--color-brand); word-break: break-all; }
+.cta-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.btn-map, .btn-website { display: inline-block; padding: .6rem 1.25rem; border-radius: 6px; font-size: .875rem; font-weight: 700; transition: opacity .15s; }
+.btn-map { background: #1B3A6B; color: white; }
+.btn-website { background: var(--color-brand); color: #111; }
+.btn-map:hover, .btn-website:hover { opacity: .85; }
+.tekst-blok { border-top: 2px solid var(--color-border); padding-top: 1.5rem; }
+.tekst-blok h2 { font-size: 1.3rem; font-weight: 800; margin: 0 0 .75rem; }
+.tekst-blok p { font-size: .9rem; color: #374151; line-height: 1.8; margin: 0 0 1rem; }
+.tekst-blok a { color: var(--color-brand); font-weight: 600; }
+aside { display: flex; flex-direction: column; gap: 1rem; }
+.aside-blok { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1.25rem; }
+.aside-blok h3 { font-size: .85rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 .5rem; }
+.aside-blok p { font-size: .8rem; color: var(--color-muted); margin: 0 0 .75rem; line-height: 1.5; }
+.btn-cta { display: block; text-align: center; background: var(--color-brand); color: #111; padding: .55rem 1rem; border-radius: 6px; font-size: .82rem; font-weight: 700; transition: opacity .15s; }
+.btn-cta:hover { opacity: .85; }
+.btn-outline { background: transparent; border: 2px solid var(--color-brand); color: #111; }
+@media (max-width: 800px) {
+  .page-layout { grid-template-columns: 1fr; }
+  aside { display: none; }
+}
+</style>

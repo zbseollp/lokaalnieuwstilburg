@@ -1,0 +1,133 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import bedrijven from "../../data/bedrijven.json";
+import categorieen from "../../data/bedrijven-categorieen.json";
+
+function makeSlug(str: string): string {
+  if (!str) return 'onbekend';
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'onbekend';
+}
+
+const seen = new Map<string, number>();
+const bedrijvenMetSlug = (bedrijven as any[]).map(b => {
+  const base = makeSlug(b.title);
+  const count = seen.get(base) ?? 0;
+  seen.set(base, count + 1);
+  const slug = count === 0 ? base : `${base}-${count + 1}`;
+  return { ...b, slug };
+});
+---
+<BaseLayout
+  title="Bedrijvengids Tilburg | Overzicht van lokale ondernemers"
+  description="Overzicht van alle lokale bedrijven en ondernemers in Tilburg met contactgegevens, adres en website informatie."
+>
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Bedrijvengids</span></nav>
+    <div class="page-header">
+      <div>
+        <h1>Bedrijvengids Tilburg</h1>
+        <p>{bedrijven.length} bedrijven &middot; {categorieen.length} categorieën</p>
+      </div>
+      <input type="search" id="searchInput" placeholder="Zoek een bedrijf..." class="search-box" />
+    </div>
+
+    <div class="cat-filter" id="catFilter">
+      <button class="cat-btn active" data-cat="">Alle</button>
+      {categorieen.map(c => (
+        <button class="cat-btn" data-cat={c}>{c}</button>
+      ))}
+    </div>
+
+    <div class="results-count" id="resultsCount">{bedrijven.length} bedrijven gevonden</div>
+
+    <div class="companies-grid" id="companiesGrid">
+      {bedrijvenMetSlug.map(b => (
+        <div class="company-card" data-cat={b.category} data-title={(b.title||"").toLowerCase()} data-city={(b.city||"").toLowerCase()}>
+          <div class="company-header">
+            <span class="company-cat-tag">{b.category}</span>
+          </div>
+          <h3><a href={`/${b.slug}/`} class="card-title-link">{b.title}</a></h3>
+          {b.street && <p class="company-addr">{b.street}{b.city ? `, ${b.city}` : ""}</p>}
+          {b.phone && <p class="company-phone"><a href={`tel:${b.phone}`}>{b.phone}</a></p>}
+          <div class="company-actions">
+            <a href={`/${b.slug}/`} class="btn-sm btn-detail">Meer info</a>
+            {b.website && <a href={b.website} target="_blank" rel="noopener" class="btn-sm">Website</a>}
+            {b.mapsUrl && <a href={b.mapsUrl} target="_blank" rel="noopener" class="btn-sm btn-maps">Kaart</a>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+const searchInput = document.getElementById("searchInput") as HTMLInputElement;
+const catFilter = document.getElementById("catFilter");
+const grid = document.getElementById("companiesGrid");
+const resultsCount = document.getElementById("resultsCount");
+const cards = grid?.querySelectorAll<HTMLElement>(".company-card") || [];
+let activeCat = "";
+
+function filter() {
+  const q = searchInput?.value.toLowerCase() || "";
+  let count = 0;
+  cards.forEach(card => {
+    const cat = card.dataset.cat || "";
+    const title = card.dataset.title || "";
+    const city = card.dataset.city || "";
+    const show = (!activeCat || cat === activeCat) && (!q || title.includes(q) || city.includes(q));
+    card.style.display = show ? "" : "none";
+    if (show) count++;
+  });
+  if (resultsCount) resultsCount.textContent = count + " bedrijven gevonden";
+}
+
+catFilter?.addEventListener("click", (e) => {
+  const btn = (e.target as HTMLElement).closest(".cat-btn") as HTMLElement;
+  if (!btn) return;
+  catFilter.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  activeCat = btn.dataset.cat || "";
+  filter();
+});
+
+searchInput?.addEventListener("input", filter);
+</script>
+
+<style>
+.container { max-width: 1200px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.page-header h1 { font-size: 2rem; font-weight: 800; margin: 0 0 0.25rem; }
+.page-header p { color: var(--color-muted); margin: 0; }
+.search-box { padding: 0.5rem 1rem; border: 1px solid var(--color-border); border-radius: 8px; font-size: 0.9rem; width: 280px; outline: none; }
+.search-box:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
+.cat-filter { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.cat-btn { padding: 0.3rem 0.75rem; border-radius: 100px; font-size: 0.78rem; font-weight: 500; border: 1px solid var(--color-border); background: white; color: var(--color-muted); cursor: pointer; transition: all 0.15s; }
+.cat-btn:hover, .cat-btn.active { background: var(--color-brand); color: white; border-color: var(--color-brand); }
+.results-count { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 1.25rem; }
+.companies-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.company-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem; transition: border-color 0.15s, box-shadow 0.15s; }
+.company-card:hover { border-color: var(--color-brand); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.company-header { margin-bottom: 0.4rem; }
+.company-cat-tag { font-size: 0.68rem; color: var(--color-brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.company-card h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
+.company-addr { font-size: 0.8rem; color: var(--color-muted); margin: 0 0 0.25rem; }
+.company-phone { font-size: 0.8rem; margin: 0 0 0.6rem; }
+.company-phone a { color: var(--color-brand); }
+.company-actions { display: flex; gap: 0.4rem; }
+.card-title-link { color: inherit; text-decoration: none; } .card-title-link:hover { color: var(--color-brand); }
+.btn-sm { padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; background: var(--color-brand); color: white; transition: background 0.15s; }
+.btn-sm:hover { background: var(--color-brand-dark); }
+.btn-detail { background: transparent; border: 1px solid var(--color-brand); color: var(--color-brand); }
+.btn-maps { background: #1B4F8A; }
+.btn-maps:hover { background: #163d6d; }
+@media (max-width: 1024px) { .companies-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) { .companies-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .companies-grid { grid-template-columns: 1fr; } .search-box { width: 100%; } }
+</style>

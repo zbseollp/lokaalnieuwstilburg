@@ -1,0 +1,571 @@
+﻿---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+const posts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const featured = posts[0];
+const newsGrid = posts.slice(1, 4);
+const listPosts = posts.slice(0, 8);
+const editorialPosts = posts.slice(0, 5);
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
+}
+function fmtShort(d: Date) {
+  return d.toLocaleDateString("nl-NL", { day: "numeric", month: "short" });
+}
+
+const sidebarCtas = [
+  { href: "/evenementen/", label: "Evenementen Tilburg", cta: "Bekijk evenementen", color: "#EF4444" },
+  { href: "/activiteiten-tilburg/", label: "Activiteiten Tilburg", cta: "Bekijk activiteiten", color: "#F59E0B" },
+  { href: "/bedrijvengids/", label: "Bedrijvengids Tilburg", cta: "Vind lokale bedrijven", color: "#3B82F6" },
+  { href: "/hotel-tilburg/", label: "Hotels in Tilburg", cta: "Boek nu een hotel", color: "#8B5CF6" },
+];
+
+const catTiles = [
+  { href: "/wandelen-tilburg/", label: "Wandelen Tilburg", icon: "home" },
+  { href: "/makelaar-tilburg/", label: "Makelaar Tilburg", icon: "briefcase" },
+  { href: "/restaurant-tilburg/", label: "Restaurants", icon: "restaurant" },
+  { href: "/bed-and-breakfast-tilburg/", label: "B&B", icon: "bed" },
+  { href: "/kapper-tilburg/", label: "Kappers", icon: "scissors" },
+  { href: "/sportschool-tilburg/", label: "Sportscholen", icon: "dumbbell" },
+];
+
+const quickLinks = [
+  { href: "/bedrijvengids/", label: "Bedrijvengids" },
+  { href: "/evenementen/", label: "Evenementen" },
+  { href: "/blog/", label: "Alle nieuws" },
+  { href: "/weer-tilburg/", label: "Weersverwachting" },
+  { href: "/koningsdag-tilburg/", label: "Koningsdag" },
+];
+---
+<BaseLayout
+  title="Lokaal nieuws Tilburg | Het laatste nieuws Tilburg"
+  description="Het laatste nieuws Tilburg lezen? Volg het nieuws uit Tilburg dagelijks op onze website lokaalnieuwstilburg.nl"
+>
+
+  <!-- Hero -->
+  <section class="site-hero">
+    <div class="container">
+      <h1>Nieuws uit Tilburg &amp; de regio.</h1>
+      <p class="hero-intro">Blijf op de hoogte van alles wat speelt in Tilburg en de regio Maasgouw. Van gemeentenieuws en lokale evenementen tot 112-meldingen en vacatures - het nieuws uit jouw omgeving op een plek.</p>
+      <a href="/blog/" class="hero-btn">Alle nieuwsberichten lezen</a>
+    </div>
+  </section>
+
+  <!-- Quick links bar -->
+  <nav class="quicklinks-bar" aria-label="Snel navigeren">
+    <div class="container">
+      <div class="quicklinks">
+        {quickLinks.map(l => (
+          <a href={l.href} class="quicklink">
+            
+            <span>{l.label}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </nav>
+
+  <!-- 3-column news grid -->
+  {newsGrid.length > 0 && (
+    <section class="news-grid-section">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Lokaal Nieuws</h2>
+          <a href="/blog/" class="section-more">Alle artikelen &rarr;</a>
+        </div>
+        <div class="news-grid">
+          {newsGrid.map(post => (
+            <article class="news-card">
+              <div class="news-card-body">
+                <div class="news-card-meta">
+                  <span class="cat-pill sm">{post.data.category}</span>
+                  <time class="meta-date">{fmtShort(post.data.pubDate)}</time>
+                </div>
+                <h3><a href={`/${post.id}/`}>{post.data.title}</a></h3>
+                {post.data.description && <p>{post.data.description.slice(0, 110)}...</p>}
+                <a href={`/${post.id}/`} class="read-more">Lees verder &rarr;</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- News tabs + sidebar -->
+  <section class="news-section">
+    <div class="container news-layout">
+
+      <div class="news-col">
+        <div class="tabs-bar" id="newsTabs">
+          <button class="tab active" data-tab="nieuws">Laatste nieuws</button>
+          <button class="tab" data-tab="112">112-meldingen</button>
+          <button class="tab" data-tab="vergunningen">Vergunningen</button>
+        </div>
+
+        <div class="tab-panel active" id="panel-nieuws">
+          <div class="news-list">
+            {listPosts.map(post => (
+              <a href={`/${post.id}/`} class="news-list-item">
+                <span class="nli-date">{fmtShort(post.data.pubDate)}</span>
+                <span class="nli-title">{post.data.title}</span>
+              </a>
+            ))}
+            <a href="/blog/" class="meer-nieuws">Bekijk meer nieuwsberichten &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-112">
+          <div class="tab-empty">
+            
+            <strong>112-meldingen</strong>
+            <p>Meldingen worden binnenkort toegevoegd.</p>
+            <a href="/112-tilburg/" class="tab-page-link">Ga naar pagina &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-vergunningen">
+          <div class="tab-empty">
+            
+            <strong>Vergunningen</strong>
+            <p>Bekendmakingen worden binnenkort toegevoegd.</p>
+            <a href="/bekendmakingen/" class="tab-page-link">Ga naar pagina &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="news-sidebar">
+        {sidebarCtas.map(c => (
+          <a href={c.href} class="sidebar-cta">
+            <div class="sidebar-dot" style={`background:${c.color}`}></div>
+            <div class="sidebar-text">
+              <span class="sidebar-label">{c.label}</span>
+              <strong class="sidebar-cta-title">{c.cta}</strong>
+            </div>
+            <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        ))}
+      </aside>
+
+    </div>
+  </section>
+
+  <script>
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>("#newsTabs .tab");
+  const panels = document.querySelectorAll<HTMLElement>(".tab-panel");
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("panel-" + btn.dataset.tab)?.classList.add("active");
+    });
+  });
+  </script>
+
+  <!-- Editorial dark section -->
+  <section class="editorial-dark">
+    <div class="container editorial-inner">
+
+      <div class="editorial-list">
+        <div class="editorial-label">
+          <span class="ed-line"></span>
+          <span>MAASBRACHT NIEUWS</span>
+          <span class="ed-line"></span>
+        </div>
+        <div class="ed-posts">
+          {editorialPosts.map((post, i) => (
+            <a href={`/${post.id}/`} class="ed-post">
+              <span class="ed-num">{String(i + 1).padStart(2, "0")}</span>
+              <div class="ed-post-body">
+                <span class="ed-cat">{post.data.category}</span>
+                <strong>{post.data.title}</strong>
+                <span class="ed-date">{fmtDate(post.data.pubDate)}</span>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          ))}
+        </div>
+        <a href="/blog/" class="ed-all-link">Alle nieuwsberichten bekijken</a>
+      </div>
+
+      <div class="editorial-text">
+        <h2>Tilburg<br/>laatste nieuws</h2>
+        <p>Op deze website vind je het allerlaatste nieuws van Tilburg en omgeving. Onze journalisten staan elke dag voor je klaar om het relevantste en laatste nieuws te brengen. Interessante nieuwsitems over Tilburg centrum komen aan bod, maar ook de buitenwijken en nabije omgeving worden regelmatig besproken.</p>
+        <p>Deze website brengt niet alleen regionaal en lokaal nieuws, maar ook informatie over vacatures, koophuizen en bedrijven in de regio.</p>
+        <p>Wij geloven erin dat het brengen van nieuws zorgt voor betrokkenheid bij de gemeenschap. Daarom maken we het je makkelijk door op een plek alles over Tilburg te bundelen.</p>
+        <a href="/blog/" class="btn-teal">Nieuws Tilburg lezen</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Category tiles -->
+  <section class="cat-section">
+    <div class="container">
+      <h2 class="cat-section-title">BEDRIJVEN IN MAASBRACHT</h2>
+      <div class="cat-tiles">
+        {catTiles.map(tile => (
+          <a href={tile.href} class="cat-tile">
+            {tile.icon === "home" && (
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            )}
+            {tile.icon === "briefcase" && (
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.97 15.96 1 13.5 1h-3C8.04 1 6 2.97 6 4.64c0 .48.11.92.18 1.36H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6.5-3c.83 0 1.5.67 1.5 1.5S14.33 6 13.5 6h-3C9.67 6 9 5.33 9 4.5S9.67 3 10.5 3h3z"/></svg>
+            )}
+            {tile.icon === "restaurant" && (
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+            )}
+            {tile.icon === "bed" && (
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+            )}
+            {tile.icon === "scissors" && (
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm0 12c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm6-7.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5zM19 3l-6 6 2 2 7-7V3z"/></svg>
+            )}
+            {tile.icon === "dumbbell" && (
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+            )}
+            <span>{tile.label.toUpperCase()}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- About section -->
+  <section class="about-section">
+    <div class="container about-inner">
+      <h2>Over LokaalnieuwsTilburg.nl</h2>
+      <p>LokaalnieuwsTilburg.nl is een van de meest gerenommeerde uitgaven in de regio. Onze missie is om onze lezers met betrouwbare, relevante en betrokken nieuwsupdates te bedienen.</p>
+      <p>De redactie van LokaalnieuwsTilburg.nl is gemotiveerd om de verhalen te brengen die de lezers elke dag willen lezen.</p>
+      <h2 class="contact-heading">Contact met ons opnemen?</h2>
+      <p>Heb je vragen aan ons over een artikel of heb je een andere vraag? Bekijk hieronder onze contactpagina!</p>
+      <a href="/contact/" class="btn-outline">Contact opnemen</a>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+
+/* Site hero */
+.site-hero {
+  background: #111;
+  color: white;
+  padding: 3rem 0 2.5rem;
+  border-bottom: 3px solid var(--color-brand);
+}
+.site-hero h1 {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0 0 0.875rem;
+}
+.hero-intro {
+  color: #d1d5db;
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 640px;
+  margin: 0 0 1.5rem;
+}
+.hero-btn {
+  display: inline-block;
+  background: var(--color-brand);
+  color: white;
+  padding: 0.65rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: opacity 0.15s;
+}
+.hero-btn:hover { opacity: 0.85; }
+.cat-pill {
+  background: var(--color-brand);
+  color: #111;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cat-pill.sm { font-size: 0.65rem; padding: 0.15rem 0.45rem; }
+.meta-date { font-size: 0.8rem; color: #9ca3af; }
+.meta-author { font-size: 0.8rem; color: #6b7280; }
+
+/* Quick links */
+.quicklinks-bar {
+  background: #1a1a1a;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.quicklinks { display: flex; gap: 0; }
+.quicklink {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #9ca3af;
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.quicklink:hover { color: var(--color-brand); background: rgba(255,255,255,0.04); }
+.ql-icon { font-size: 1rem; }
+
+/* News grid */
+.news-grid-section { padding: 2rem 0 1rem; }
+.section-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-brand); padding-bottom: 0.5rem; margin-bottom: 1.25rem; }
+.section-title { font-size: 1rem; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 0.05em; }
+.section-more { font-size: 0.8rem; color: var(--color-brand); font-weight: 600; }
+.news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.news-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; transition: box-shadow 0.15s, border-color 0.15s; }
+.news-card:hover { border-color: var(--color-brand); box-shadow: 0 4px 16px rgba(192,57,43,0.1); }
+.news-card-body { padding: 1.1rem; }
+.news-card-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.news-card h3 { font-size: 0.95rem; font-weight: 700; line-height: 1.35; margin: 0 0 0.5rem; }
+.news-card h3 a:hover { color: var(--color-brand); }
+.news-card p { font-size: 0.8rem; color: #6b7280; line-height: 1.55; margin: 0 0 0.625rem; }
+.read-more { font-size: 0.78rem; color: var(--color-brand); font-weight: 600; }
+
+/* News tabs + sidebar */
+.news-section { padding: 1.5rem 0 2rem; }
+.news-layout { display: grid; grid-template-columns: 1fr 280px; gap: 2rem; align-items: start; }
+.tabs-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e5e7eb;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab {
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+  cursor: pointer;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+.tab:hover { color: #111; border-bottom-color: #d1d5db; }
+.tab.active { color: #111; border-bottom-color: #111; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.news-list { border: 1px solid #e5e7eb; border-top: none; }
+.news-list-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.1s;
+}
+.news-list-item:hover { background: #f9fafb; }
+.nli-date { font-size: 0.72rem; color: #9ca3af; white-space: nowrap; flex-shrink: 0; }
+.nli-title { font-size: 0.875rem; color: #1D4ED8; line-height: 1.35; }
+.meer-nieuws {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  background: #f9fafb;
+}
+.meer-nieuws:hover { text-decoration: underline; }
+
+.tab-empty {
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+.tab-empty-icon { font-size: 2rem; }
+.tab-empty strong { font-size: 1rem; color: #111; }
+.tab-empty p { font-size: 0.85rem; margin: 0; }
+.tab-page-link { font-size: 0.82rem; color: var(--color-brand); font-weight: 600; margin-top: 0.25rem; }
+.tab-page-link:hover { text-decoration: underline; }
+
+.news-sidebar { display: flex; flex-direction: column; gap: 0.5rem; }
+.sidebar-cta {
+  display: flex;
+  gap: 0.875rem;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sidebar-cta:hover { border-color: var(--color-brand); box-shadow: 0 2px 8px rgba(192,57,43,0.1); }
+.sidebar-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.sidebar-text { display: flex; flex-direction: column; gap: 0.1rem; flex: 1; }
+.sidebar-label { font-size: 0.7rem; color: #9ca3af; }
+.sidebar-cta-title { font-size: 0.875rem; color: #111; font-weight: 700; line-height: 1.3; }
+.sidebar-arrow { width: 16px; height: 16px; flex-shrink: 0; color: #d1d5db; }
+.sidebar-cta:hover .sidebar-arrow { color: var(--color-brand); }
+
+/* Editorial dark section */
+.editorial-dark { background: #111; color: #fff; padding: 3.5rem 0; }
+.editorial-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+
+.editorial-list { display: flex; flex-direction: column; gap: 1.5rem; }
+.editorial-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--color-brand);
+  text-transform: uppercase;
+}
+.ed-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+
+.ed-posts { display: flex; flex-direction: column; }
+.ed-post {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  transition: padding-left 0.15s;
+}
+.ed-post:last-child { border-bottom: none; }
+.ed-post:hover { padding-left: 0.5rem; }
+.ed-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.1);
+  line-height: 1;
+  min-width: 2.5rem;
+  font-variant-numeric: tabular-nums;
+}
+.ed-post:hover .ed-num { color: var(--color-brand); }
+.ed-post-body { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+.ed-cat { font-size: 0.65rem; color: var(--color-brand); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.ed-post-body strong { font-size: 0.9rem; line-height: 1.35; color: #e5e7eb; }
+.ed-post:hover .ed-post-body strong { color: #fff; }
+.ed-date { font-size: 0.72rem; color: #4b5563; }
+.ed-post svg { width: 18px; height: 18px; flex-shrink: 0; color: rgba(255,255,255,0.2); transition: color 0.15s; }
+.ed-post:hover svg { color: var(--color-brand); }
+.ed-all-link {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  border: 1px solid var(--color-brand);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  align-self: flex-start;
+  transition: background 0.15s, color 0.15s;
+}
+.ed-all-link:hover { background: var(--color-brand); color: #111; }
+
+.editorial-text h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0 0 1.25rem;
+  color: #fff;
+}
+.editorial-text p { color: #9ca3af; line-height: 1.7; margin: 0 0 0.875rem; }
+.btn-teal {
+  display: inline-block;
+  background: var(--color-brand);
+  color: #111;
+  padding: 0.7rem 1.6rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  transition: background 0.15s;
+}
+
+/* Category tiles */
+.cat-section { padding: 2.5rem 0; background: #f9fafb; border-top: 1px solid #e5e7eb; }
+.cat-section-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #6b7280;
+  margin: 0 0 1.25rem;
+}
+.cat-tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; }
+.cat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 1.5rem 0.75rem;
+  background: var(--color-brand);
+  color: #111;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.cat-tile:hover { background: #111; color: var(--color-brand); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.cat-tile svg { width: 34px; height: 34px; flex-shrink: 0; }
+
+/* About section */
+.about-section { padding: 3rem 0 3.5rem; background: #fff; border-top: 1px solid #e5e7eb; }
+.about-inner { max-width: 720px; }
+.about-inner h2 { font-size: 1.75rem; font-weight: 800; margin: 0 0 1rem; }
+.contact-heading { margin-top: 2rem; }
+.about-inner p { color: #4b5563; line-height: 1.75; margin: 0 0 0.875rem; }
+.btn-outline {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  border: 2px solid var(--color-brand);
+  color: var(--color-brand);
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+}
+.btn-outline:hover { background: var(--color-brand); color: #111; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cat-tiles { grid-template-columns: repeat(3, 1fr); }
+  .featured-inner { grid-template-columns: 1fr; }
+  .featured-side { display: none; }
+}
+@media (max-width: 768px) {
+  .news-layout { grid-template-columns: 1fr; }
+  .news-sidebar { display: none; }
+  .news-grid { grid-template-columns: 1fr; }
+  .editorial-inner { grid-template-columns: 1fr; }
+  .editorial-text { display: none; }
+  .cat-tiles { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 480px) {
+  .cat-tiles { grid-template-columns: repeat(2, 1fr); }
+}
+</style>

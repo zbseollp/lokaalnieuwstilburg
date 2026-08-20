@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Rommelmarkt"].includes(b.category));
+const content = paginas["rommelmarkt-tilburg"];
+---
+<CategoriePagina slug="rommelmarkt-tilburg" content={content} bedrijven={filtered} noBedrijven={true} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

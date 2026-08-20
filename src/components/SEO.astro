@@ -1,0 +1,33 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  type?: "website" | "article";
+}
+const {
+  title,
+  description = "Hét lokale nieuws- en informatieplatform voor Tilburg. Bedrijvengids, vacatures, evenementen, woningen en meer.",
+  image = "/og-default.jpg",
+  noindex = false,
+  type = "website",
+} = Astro.props;
+const site = "Lokaal Nieuws Tilburg";
+const fullTitle = title || site;
+const canonical = new URL(Astro.url.pathname, "https://lokaalnieuwstilburg.nl").href;
+---
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={new URL(image, "https://lokaalnieuwstilburg.nl").href} />
+<meta property="og:locale" content="nl_NL" />
+<meta property="og:site_name" content={site} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />

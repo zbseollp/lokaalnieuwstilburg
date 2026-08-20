@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Benzinestation", "Tankstation"].includes(b.category));
+const content = paginas["benzineprijs-tilburg"];
+---
+<CategoriePagina slug="benzineprijs-tilburg" content={content} bedrijven={filtered} noBedrijven={true} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

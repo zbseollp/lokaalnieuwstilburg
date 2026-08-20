@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Kermis"].includes(b.category));
+const content = paginas["kermis-tilburg"];
+---
+<CategoriePagina slug="kermis-tilburg" content={content} bedrijven={filtered} noBedrijven={true} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

@@ -1,0 +1,51 @@
+---
+const { size = "default" } = Astro.props;
+---
+<a href="/" class="logo-wrap" aria-label="Lokaal Nieuws Tilburg - Home">
+  <span class="logo-mark">LN</span>
+  <span class="logo-text">
+    <span class="logo-lokaal">Lokaal Nieuws</span>
+    <span class="logo-city">Tilburg</span>
+  </span>
+</a>
+
+<style>
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--color-brand);
+  color: white;
+  font-weight: 800;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  letter-spacing: -0.05em;
+  flex-shrink: 0;
+}
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.logo-lokaal {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.logo-city {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+}
+</style>

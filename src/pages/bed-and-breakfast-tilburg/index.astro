@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Bed and Breakfast", "B&B"].includes(b.category));
+const content = paginas["bed-and-breakfast-tilburg"];
+---
+<CategoriePagina slug="bed-and-breakfast-tilburg" content={content} bedrijven={filtered} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

@@ -1,0 +1,75 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import evenementen from "../../data/evenementen.json";
+function fmtDate(d: string | null) {
+  if (!d) return "Datum onbekend";
+  return new Date(d).toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+---
+<BaseLayout
+  title="Evenementen Tilburg"
+  description="Aankomende evenementen in Tilburg en de regio Maasgouw."
+>
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Evenementen</span></nav>
+    <h1>Evenementen Tilburg</h1>
+    <p class="intro">Aankomende activiteiten in Tilburg en omgeving.</p>
+
+    <div class="events-grid">
+      {(evenementen as any[]).map(ev => (
+        <a
+          href={ev.url || "#"}
+          target={ev.url ? "_blank" : undefined}
+          rel="noopener"
+          class="event-card"
+        >
+          {ev.banner && (
+            <div class="event-img">
+              <img src={ev.banner} alt={ev.name} loading="lazy" />
+            </div>
+          )}
+          <div class="event-body">
+            <span class="event-cat">{ev.category}</span>
+            <h3>{ev.name}</h3>
+            <p class="event-date">{fmtDate(ev.date)}</p>
+            {ev.location && <p class="event-loc">{ev.location.slice(0, 80)}</p>}
+            {ev.organizer && <p class="event-org">Door: {ev.organizer}</p>}
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {evenementen.length === 0 && (
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <h2>Binnenkort beschikbaar</h2>
+        <p>Evenementen in Tilburg en omgeving worden binnenkort toegevoegd. Kom later terug.</p>
+        <a href="/" class="back-link">&larr; Terug naar Home</a>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+.container { max-width: 1200px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+h1 { font-size: 2rem; font-weight: 800; margin: 0 0 0.4rem; }
+.intro { color: var(--color-muted); margin: 0 0 2rem; }
+.events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.event-card { background: white; border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; transition: box-shadow 0.15s, border-color 0.15s; }
+.event-card:hover { border-color: var(--color-brand); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.event-img img { width: 100%; height: 200px; object-fit: cover; display: block; }
+.event-body { padding: 1rem; }
+.event-cat { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-brand); }
+.event-body h3 { font-size: 1rem; font-weight: 700; margin: 0.3rem 0 0.4rem; line-height: 1.3; color: var(--color-ink); }
+.event-date { font-size: 0.82rem; font-weight: 600; color: #1D4ED8; margin: 0 0 0.25rem; }
+.event-loc, .event-org { font-size: 0.78rem; color: var(--color-muted); margin: 0; }
+.empty-state { text-align: center; padding: 4rem 2rem; }
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-state h2 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.5rem; }
+.empty-state p { color: var(--color-muted); margin: 0 0 1.5rem; }
+.back-link { color: var(--color-brand); font-weight: 600; font-size: 0.9rem; }
+@media (max-width: 900px) { .events-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 580px) { .events-grid { grid-template-columns: 1fr; } }
+</style>

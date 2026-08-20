@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Pedicure"].includes(b.category));
+const content = paginas["pedicure-tilburg"];
+---
+<CategoriePagina slug="pedicure-tilburg" content={content} bedrijven={filtered} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

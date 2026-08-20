@@ -1,0 +1,58 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import bekendmakingen from "../../data/bekendmakingen.json";
+function fmtDate(d: string | null) {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
+}
+const rubrieken = [...new Set((bekendmakingen as any[]).map(b => b.rubric).filter(Boolean))].sort();
+---
+<BaseLayout
+  title="Bekendmakingen en vergunningen Tilburg"
+  description="Overzicht van vergunningaanvragen en bekendmakingen uit Tilburg"
+>
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Bekendmakingen</span></nav>
+    <h1>Bekendmakingen Tilburg</h1>
+    <p class="intro">Officiële publicaties van gemeente Maasgouw via overheid.nl.</p>
+
+    <div class="bek-list">
+      {(bekendmakingen as any[]).map(b => (
+        <a href={b.url || "#"} target={b.url ? "_blank" : undefined} rel="noopener" class="bek-item">
+          <div class="bek-main">
+            <span class="bek-rubric">{b.rubric}</span>
+            <h3>{b.title}</h3>
+            {b.street && <p class="bek-addr">{b.street}{b.city ? `, ${b.city}` : ""}</p>}
+          </div>
+          <div class="bek-meta">
+            <time>{fmtDate(b.date)}</time>
+            <span class="bek-ext">Bekijk op overheid.nl &rarr;</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {bekendmakingen.length === 0 && (
+      <p class="empty">Geen bekendmakingen gevonden voor deze regio.</p>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+.container { max-width: 900px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+h1 { font-size: 2rem; font-weight: 800; margin: 0 0 0.4rem; }
+.intro { color: var(--color-muted); margin: 0 0 2rem; }
+.bek-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.bek-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; background: white; border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem 1.25rem; transition: border-color 0.15s; }
+.bek-item:hover { border-color: var(--color-brand); }
+.bek-rubric { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-brand); margin-bottom: 0.3rem; }
+.bek-main h3 { font-size: 0.9rem; font-weight: 600; margin: 0 0 0.25rem; line-height: 1.4; color: var(--color-ink); }
+.bek-addr { font-size: 0.8rem; color: var(--color-muted); margin: 0; }
+.bek-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; white-space: nowrap; flex-shrink: 0; }
+.bek-meta time { font-size: 0.78rem; color: var(--color-muted); }
+.bek-ext { font-size: 0.75rem; color: var(--color-brand); font-weight: 600; }
+.empty { text-align: center; padding: 3rem; color: var(--color-muted); }
+@media (max-width: 580px) { .bek-item { flex-direction: column; } .bek-meta { align-items: flex-start; } }
+</style>

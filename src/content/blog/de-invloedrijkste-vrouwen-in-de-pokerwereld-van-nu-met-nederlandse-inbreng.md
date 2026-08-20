@@ -1,0 +1,39 @@
+---
+title: "De invloedrijkste vrouwen in de pokerwereld van nu, met Nederlandse inbreng"
+description: "Poker gold lange tijd als een mannenbolwerk, en in zekere zin is dat nog altijd zo. Naar schatting is slechts zo'n vijf procent van de professionele spelers vrouw. Toch verandert het beeld in hoog tem"
+pubDate: 2026-06-23
+author: "Redactie"
+category: "Nieuws"
+tags: []
+draft: false
+---
+
+Poker gold lange tijd als een mannenbolwerk, en in zekere zin is dat nog altijd zo. Naar schatting is slechts zo'n vijf procent van de professionele spelers vrouw. Toch verandert het beeld in hoog tempo. Aan de belangrijkste tafels ter wereld zitten vandaag de dag vrouwen die niet alleen meedoen, maar het spel daadwerkelijk vormgeven, met hun resultaten, hun strategische diepgang en hun invloed op een hele generatie. Veel van deze kampioenes hebben hun eerste ervaring waarschijnlijk niet meteen aan een grote live tafel opgedaan, maar door online te oefenen, strategieën te testen en spelritme op te bouwen via omgevingen zoals **[top nederlandse online casinos](https://www.thegameroom.org/online-casinos/)**. In dit overzicht zetten we de meest invloedrijke vrouwen van het moment op een rij, en besteden we extra aandacht aan de Nederlandse inbreng, die dankzij één iconische naam groter is dan je misschien zou denken.
+
+## Kristen Foxen: de onbetwiste nummer één
+
+Geen enkele vrouw drukt op dit moment zo'n stempel op het topsegment als **[Kristen Foxen](https://pokerdb.thehendonmob.com/player.php?a=r&#038;n=133320)**, die veel fans nog kennen onder haar meisjesnaam Bicknell. De Canadese leidt de aller-tijden geldlijst voor vrouwen met **ruim vijftien miljoen dollar** aan live toernooiwinst en heeft inmiddels **vijf WSOP-bracelets** op haar naam staan. Ze werd al vijf keer verkozen tot **GPI Female Player of the Year**, en in 2025 schreef ze geschiedenis door als eerste vrouw bovenaan te eindigen in het algemene klassement van de prestigieuze **PokerGO Tour**, waar de hoogste buy-ins de allerbeste spelers ter wereld samenbrengen. Haar reputatie is gebouwd op discipline, een agressieve maar gecontroleerde speelstijl en een uitzonderlijk vermogen om situaties te lezen. Minstens zo belangrijk is haar rol buiten de tafel: Foxen zet zich actief in om meer meisjes en vrouwen naar het spel te trekken.
+
+## Leo Margets en de doorbraak van 2025
+
+Als er één prestatie symbool staat voor de groeiende aanwezigheid van vrouwen in het hoogste poker, dan is het die van de Spaanse **[Leo Margets](https://en.wikipedia.org/wiki/Leo_Margets)**. In de zomer van 2025 bereikte ze de finaletafel van het **WSOP Main Event**, het meest prestigieuze toernooi ter wereld. Ze eindigde als zevende voor maar liefst **1,5 miljoen dollar**, en werd daarmee de eerste vrouw in dertig jaar die zover kwam in dit evenement. De laatste die haar daarin voorging was Barbara Enright, die in 1995 als vijfde eindigde. Margets, een ervaren toernooispeler en bracelet-winnaar, liet zien dat een vrouw ook onder de allerhoogste druk, in een veld van bijna tienduizend deelnemers, tot het uiterste kan gaan. Haar prestatie gaf de hele vrouwelijke pokergemeenschap een enorme impuls.
+
+## Meer dan resultaten: stemmen die het spel veranderen
+
+Invloed laat zich niet alleen in prijzengeld uitdrukken. **Maria Ho** geldt al jaren als een van de meest gerespecteerde vrouwen in poker, niet alleen vanwege haar consistente resultaten en talloze WSOP-cashes, maar ook door haar werk als commentator bij grote toernooien. Ze is een uitgesproken pleitbezorger voor diversiteit en gelijkwaardigheid in de pokerwereld, en haar stem reikt veel verder dan de speeltafel. Een heel ander verhaal is dat van **Maria Konnikova**, een psychologe met een doctorstitel van Columbia University, die poker oorspronkelijk wilde leren puur als onderzoeksobject. Het liep anders: ze werd een volwaardig professional, won in 2024 haar eerste WSOP-bracelet en schreef met The Biggest Bluff een bestseller die duizenden lezers liet inzien dat poker geen gokspel is, maar een spel van strategie en psychologie.
+
+Wie over invloed spreekt, kan ook **Vanessa Selbst** niet overslaan. Hoewel ze in 2018 stopte als professional, blijft zij het ijkpunt. Met bijna **twaalf miljoen dollar** aan winst en drie WSOP-bracelets, allemaal gewonnen in open events tegen mannen en vrouwen door elkaar, en als enige vrouw ooit bovenaan de Global Poker Index, inspireert ze nog altijd een nieuwe generatie. Samen vertegenwoordigen deze vrouwen de verschillende manieren waarop je het spel kunt veranderen: door te winnen, door te vertellen en door te onderwijzen.
+
+## De Nederlandse inbreng: Fatima Moreira de Melo
+
+En Nederland? Ons land heeft één naam die er met kop en schouders bovenuit steekt: **[Fatima Moreira de Melo](https://www.pokerstars.it/poker/learn/lesson/fatima-moreira-de-melo-consigli-per-giocare-il-tuo-primo-torneo-live/)**. Voordat ze de pokerwereld betrad, was ze al een gevierd topsportster. Als hockeyster speelde ze **247 interlands** voor Oranje en nam ze deel aan **drie Olympische Spelen**, een achtergrond die haar competitieve instelling en mentale weerbaarheid verklaart. Na haar hockeyloopbaan maakte ze de overstap naar de groene tafel en werd ze jarenlang het gezicht van **PokerStars** in Nederland. Voor veel mensen die zelf nooit een kaart hebben geschud, is zij simpelweg dé associatie met poker, mede dankzij haar vele optredens in televisieprogramma's. Die zichtbaarheid heeft ontzettend veel betekend voor de populariteit van het spel in Nederland, en het is dan ook niet voor niets dat ze is opgenomen in de **Nederlandse Poker Hall of Fame**.
+
+Ook aan de tafel boekte ze mooie resultaten. Vlak nadat ze in 2009 met poker begon, eindigde ze als negende in het Main Event van de **Master Classics of Poker**, het grootste toernooi van Nederland, goed voor bijna **49.000 dollar**. Een jaar later werd ze derde tijdens de EPT Snowfest, en haar grootste cash boekte ze als runner-up tijdens een UKIPT-stop op het eiland Man, waar ze bijna **96.000 dollar** verdiende. In totaal staat haar live toernooiwinst op ruim een half miljoen dollar. Tegenwoordig is ze minder actief op het circuit, maar haar status als boegbeeld van het Nederlandse poker is onbetwist.
+
+## Wie volgt: Roseline Siman en de toekomst
+
+De vraag die logischerwijs volgt, is wie de fakkel overneemt. Binnen Nederland wordt **Roseline Siman** vaak genoemd als de natuurlijke opvolger. Anders dan Fatima is zij nog volop actief, en haar prijzengeld blijft groeien naarmate ze meer grote toernooien speelt. Ze is een vertrouwd gezicht in de Nederlandse pokerscene en bewijst dat er ook na het tijdperk Moreira de Melo Nederlands vrouwelijk talent aan de tafels te vinden is. De huldiging van nieuwe leden van de Nederlandse Poker Hall of Fame vindt traditioneel plaats tijdens de Master Classics of Poker in Amsterdam, een mooi podium om toekomstige toppers in het zonnetje te zetten.
+
+De bredere context stemt optimistisch. Vrouwenevenementen, internationale netwerken en online gemeenschappen die vrouwen helpen de stap naar live poker te zetten, schieten als paddenstoelen uit de grond. Steeds meer vrouwen ontdekken dat de tafel geen geslacht kent, alleen vaardigheid. Van Kristen Foxen die records breekt tot Fatima Moreira de Melo die een heel land kennis liet maken met het spel: de invloed van vrouwen op poker is allang geen voetnoot meer, maar een hoofdstuk op zich.
+
+Welke vrouwelijke speler zou jij het liefst aan het werk zien tijdens de volgende grote toernooistop in de Benelux: een wereldtopper als Foxen of Margets, of toch een Nederlands talent dat aan de weg timmert?

@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Fysiotherapie", "Fysio", "Fysiotherapeut", "Fysiotherapiepraktijk"].includes(b.category));
+const content = paginas["fysio-tilburg"];
+---
+<CategoriePagina slug="fysio-tilburg" content={content} bedrijven={filtered} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

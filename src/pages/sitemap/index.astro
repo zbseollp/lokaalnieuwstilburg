@@ -1,0 +1,125 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import bedrijven from "../../data/bedrijven.json";
+
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+const sortedPosts = posts.sort((a, b) =>
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+
+function makeSlug(str: string): string {
+  if (!str) return 'onbekend';
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'onbekend';
+}
+
+const seen = new Map<string, number>();
+const bedrijvenMetSlug = (bedrijven as any[]).filter(b => b.title?.trim()).map(b => {
+  const base = makeSlug(b.title);
+  const count = seen.get(base) ?? 0;
+  seen.set(base, count + 1);
+  const slug = count === 0 ? base : `${base}-${count + 1}`;
+  return { ...b, slug };
+});
+
+const categoriePaginas = [
+  { href: "/112-tilburg/", label: "112 meldingen" },
+  { href: "/activiteiten-tilburg/", label: "Activiteiten" },
+  { href: "/bed-and-breakfast-tilburg/", label: "Bed & Breakfast" },
+  { href: "/bekendmakingen/", label: "Bekendmakingen" },
+  { href: "/benzineprijs-tilburg/", label: "Benzineprijs" },
+  { href: "/bowlen-tilburg/", label: "Bowlen" },
+  { href: "/camping-tilburg/", label: "Camping" },
+  { href: "/evenementen/", label: "Evenementen" },
+  { href: "/fotograaf-tilburg/", label: "Fotograaf" },
+  { href: "/fysio-tilburg/", label: "Fysiotherapeut" },
+  { href: "/funda-tilburg/", label: "Funda woningen" },
+  { href: "/gebedstijden-tilburg/", label: "Gebedstijden" },
+  { href: "/hotel-tilburg/", label: "Hotel" },
+  { href: "/kapper-tilburg/", label: "Kapper" },
+  { href: "/kermis-tilburg/", label: "Kermis" },
+  { href: "/kinderopvang-tilburg/", label: "Kinderopvang" },
+  { href: "/tilburg-stroomstoring/", label: "Stroomstoring" },
+  { href: "/makelaar-tilburg/", label: "Makelaar" },
+  { href: "/massage-tilburg/", label: "Massage" },
+  { href: "/notaris-tilburg/", label: "Notaris" },
+  { href: "/overlijdensberichten-tilburg/", label: "Overlijdensberichten" },
+  { href: "/pedicure-tilburg/", label: "Pedicure" },
+  { href: "/restaurant-tilburg/", label: "Restaurant" },
+  { href: "/rijschool-tilburg/", label: "Rijschool" },
+  { href: "/rommelmarkt-tilburg/", label: "Rommelmarkt" },
+  { href: "/schoorsteenveger-tilburg/", label: "Schoorsteenveger" },
+  { href: "/snackbar-tilburg/", label: "Snackbar" },
+  { href: "/sportschool-tilburg/", label: "Sportschool" },
+  { href: "/tandarts-tilburg/", label: "Tandarts" },
+  { href: "/tuinmeubelen-tilburg/", label: "Tuinmeubelen" },
+  { href: "/vacatures-tilburg/", label: "Vacatures" },
+  { href: "/wandelen-tilburg/", label: "Wandelroutes" },
+  { href: "/weer-tilburg/", label: "Weersverwachting" },
+];
+---
+<BaseLayout title="Sitemap - LokaalNieuwsTilburg.nl" description="Overzicht van alle pagina's op LokaalNieuwsTilburg.nl.">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Sitemap</span></nav>
+    <h1>Sitemap</h1>
+
+    <div class="block">
+      <h2>Algemeen</h2>
+      <ul>
+        <li><a href="/">Homepage</a></li>
+        <li><a href="/blog/">Alle nieuwsberichten</a></li>
+        <li><a href="/bedrijvengids/">Bedrijvengids</a></li>
+        <li><a href="/over-ons/">Over ons</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>Nieuwsberichten ({sortedPosts.length})</h2>
+      <ul>
+        {sortedPosts.map(post => (
+          <li><a href={`/${post.id}/`}>{post.data.title}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>Categoriepagina's ({categoriePaginas.length})</h2>
+      <ul class="two-col">
+        {categoriePaginas.map(p => (
+          <li><a href={p.href}>{p.label}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>Bedrijven ({bedrijvenMetSlug.length})</h2>
+      <ul class="two-col">
+        {bedrijvenMetSlug.map(b => (
+          <li><a href={`/${b.slug}/`}>{b.title}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.breadcrumb { display: flex; gap: .5rem; font-size: .8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+h1 { font-size: 2rem; font-weight: 800; margin: 0 0 2rem; }
+
+.block { margin-bottom: 2.5rem; }
+.block h2 { font-size: 1rem; font-weight: 800; color: var(--color-brand); text-transform: uppercase; letter-spacing: .05em; margin: 0 0 .75rem; border-bottom: 2px solid var(--color-border); padding-bottom: .4rem; }
+.block ul { list-style: none; padding: 0; margin: 0; }
+.block ul li { border-bottom: 1px solid var(--color-border); }
+.block ul li a { display: block; padding: .35rem 0; font-size: .875rem; color: var(--color-muted); transition: color .1s; }
+.block ul li a:hover { color: var(--color-brand); }
+
+.two-col { columns: 2; column-gap: 2rem; }
+@media (max-width: 600px) { .two-col { columns: 1; } }
+</style>

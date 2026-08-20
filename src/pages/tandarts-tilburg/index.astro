@@ -1,0 +1,8 @@
+﻿---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered = (bedrijven as any[]).filter(b => ["Tandarts"].includes(b.category));
+const content = paginas["tandarts-tilburg"];
+---
+<CategoriePagina slug="tandarts-tilburg" content={content} bedrijven={filtered} breadcrumbParent={{ label: "Bedrijvengids", href: "/bedrijvengids/" }} />

@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Contact Tilburg | Contactpagina lokaalnieuwstilburg.nl" description="Vragen over adverteren, inhoud van een artikel of een andere vraag? Neem contact met ons op in Tilburg via het formulier!">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Contact</span></nav>
+    <div class="contact-grid">
+      <div>
+        <h1>Contact</h1>
+        <p>Vragen rondom adverteren op onze site, inhoud van artikelen of overige vragen? Neem via onderstaand formulier contact met ons op en we helpen je snel!</p>
+        <p>Op dit moment zijn wij telefonisch niet bereikbaar.</p>
+      </div>
+      <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="281f477d-7744-407d-9b6a-9b8d9c6abe3c" />
+        <input type="hidden" name="subject" value="Lokaal Nieuws Tilburg contactformulier" />
+        <input type="hidden" name="from_name" value="LokaalnieuwsTilburg.nl" />
+        <input type="hidden" name="redirect" value="/contact/bedankt/" />
+        <div class="form-row">
+          <label>Naam <input type="text" name="name" required /></label>
+          <label>E-mailadres <input type="email" name="email" required /></label>
+        </div>
+        <label>Onderwerp <input type="text" name="subject_custom" /></label>
+        <label>Bericht <textarea name="message" rows="6" required></textarea></label>
+        <div class="h-captcha" data-captcha="true" data-sitekey="ec441b56-b0aa-4ca6-8c46-3fac80768ee6"></div>
+        <button type="submit" class="btn-submit">Verzend email</button>
+      </form>
+    </div>
+  </div>
+</BaseLayout>
+
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+<style>
+.container { max-width: 1000px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 3rem; }
+.contact-grid h1 { font-size: 2rem; font-weight: 800; margin: 0 0 1rem; }
+.contact-info { list-style: none; padding: 0; margin: 1rem 0 0; }
+.contact-info li { padding: 0.5rem 0; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; color: var(--color-muted); }
+.contact-info li::before { content: "✓ "; color: var(--color-brand); font-weight: 700; }
+.contact-form { display: flex; flex-direction: column; gap: 1rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; font-weight: 600; }
+input, textarea { padding: 0.6rem 0.75rem; border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.15s; }
+input:focus, textarea:focus { border-color: var(--color-brand); box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
+.btn-submit { background: var(--color-brand); color: white; border: none; padding: 0.75rem 2rem; border-radius: 6px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; align-self: flex-start; }
+.btn-submit:hover { opacity: 0.9; }
+@media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+</style>

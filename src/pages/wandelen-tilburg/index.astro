@@ -1,0 +1,8 @@
+---
+import CategoriePagina from "../../components/CategoriePagina.astro";
+import paginas from "../../data/categoriepaginas";
+import bedrijven from "../../data/bedrijven.json";
+const filtered: any[] = [];
+const content = paginas["wandelen-tilburg"];
+---
+<CategoriePagina slug="wandelen-tilburg" content={content} bedrijven={filtered} noBedrijven={true} breadcrumbParent={{ label: "Activiteiten", href: "/activiteiten-tilburg/" }} />

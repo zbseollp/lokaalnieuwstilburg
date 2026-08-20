@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Over ons | LokaalnieuwsTilburg.nl" description="Welkom op de over ons pagina van lokaalnieuwstilburg.nl. De nieuwswebsite voor al het nieuws, vacatures en berichten uit Tilburg.">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Over ons</span></nav>
+    <div class="page-content">
+      <h1>Over ons</h1>
+      <p>LokaalnieuwsTilburg.nl is al jaren de lokale nieuwssite van Tilburg. Via onze site blijf je dagelijks op de hoogte van het nieuws van Tilburg centrum en de andere delen.</p>
+      <p>LokaalnieuwsTilburg.nl is opgericht om je dagelijks betrouwbaar nieuws te kunnen bieden van onze journalisten. We brengen het laatste nieuws op een toegankelijke manier om je zo goed mogelijk op de hoogte te houden van wat er vandaag gebeurt in Tilburg.</p>
+      <h2>Onze missie</h2>
+      <p>De missie van lokaalnieuwstilburg.nl is om je dagelijks op de hoogte te stellen van het laatste lokale nieuws. Ons nieuws is erg divers en we brengen zowel het grote als het kleine nieuws. We schrijven over meerdere rubrieken waardoor je bijvoorbeeld op de hoogte blijft van de lokale politiek, 112 meldingen, vacatures, koopwoningen in de regio, vergunningsaanvragen en leuke aanstaande evenementen!</p>
+      <p>De nieuwsartikelen worden zo geschreven en geselecteerd zodat het herkenbaar is voor de inwoners van Tilburg. Door onze uitgebreide selectie van onderwerpen ben je na het lezen van de site weer helemaal op de hoogte van de laatste nieuwtjes van vandaag.</p>
+      <h2>Onze redactie</h2>
+      <p>LokaalnieuwsTilburg.nl bestaat uit een team van hardwerkende collega's. Zonder ons goede team geen dagelijks nieuws. Wij stellen je dan ook met plezier voor aan de mensen achter de schermen. Onze redactie werkt onafhankelijk en heeft als doel lokaal nieuws van hoogwaardige kwaliteit te brengen.</p>
+      <h2>Contact met LokaalnieuwsTilburg.nl</h2>
+      <p>Ben jij een lokale ondernemer in Tilburg of omgeving en wil je je bedrijf onder de aandacht brengen bij onze bezoekers? Kom dan in contact met ons over de advertentiemogelijkheden. Neem contact met ons op op via de <a href="/contact/">contactpagina</a>.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.container { max-width: 800px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+.page-content h1 { font-size: 2rem; font-weight: 800; margin: 0 0 1rem; }
+.lead { font-size: 1.1rem; color: #374151; border-left: 3px solid var(--color-brand); padding-left: 1rem; margin-bottom: 1.5rem; }
+.page-content h2 { font-size: 1.3rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+.page-content ul { line-height: 1.8; margin-left: 1.25rem; }
+.page-content a { color: var(--color-brand); text-decoration: underline; }
+</style>

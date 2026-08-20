@@ -1,0 +1,19 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Externe nieuwsberichten uit Tilburg | LokaalnieuwsTilburg.nl" description="Blijf als inwoner van Tilburg op de hoogte van wat er speelt in de omgeving met deze externe nieuwsberichten.">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Externe nieuwsberichten Tilburg</span></nav>
+    <h1>Externe nieuwsberichten Tilburg</h1>
+    <p class="intro">Op deze pagina deelt LokaalnieuwsTilburg.nl nieuwsitems uit externe bronnen.</p>
+    <p>Door het verzamelen van berichten uit verschillende nieuwsbronnen proberen we je zo breed mogelijk te informeren over alles wat er speelt in Tilburg en omgeving.</p>
+  </div>
+</BaseLayout>
+<style>
+.container { max-width: 800px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: .5rem; font-size: .8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+h1 { font-size: 2rem; font-weight: 800; margin: 0 0 .75rem; }
+.intro { color: var(--color-muted); margin: 0 0 1.5rem; font-size: 1.05rem; }
+.coming { font-size: .9rem; } .coming a { color: var(--color-brand); }
+</style>

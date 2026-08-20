@@ -1,0 +1,136 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import woningen from "../../data/woningen.json";
+const categories = [...new Set((woningen as any[]).map(w => w.category).filter(Boolean))].sort();
+---
+<BaseLayout
+  title="Funda Tilburg | Lijst Funda Tilburg te koop"
+  description="Op zoek naar een woning in Tilburg? Bekijk hier een lijst van alle woningen op Funda Tilburg. Vind vandaag nog je droomhuis in Tilburg!"
+>
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><span>Woningen</span></nav>
+    <div class="page-header">
+      <div>
+        <h1>Woningen te koop Tilburg</h1>
+        <p>{woningen.length} woningen &middot; Data via Funda</p>
+      </div>
+      <input type="search" id="searchInput" placeholder="Zoek straat of plaats..." class="search-box" />
+    </div>
+
+    <div class="cat-filter">
+      <button class="cat-btn active" data-cat="">Alle</button>
+      {categories.map(c => <button class="cat-btn" data-cat={c}>{c}</button>)}
+    </div>
+
+    {woningen.length === 0 ? (
+      <div class="empty-state">
+        <div class="empty-icon">🏠</div>
+        <h2>Binnenkort beschikbaar</h2>
+        <p>Woningen te koop in Tilburg en omgeving worden binnenkort toegevoegd. Kom later terug.</p>
+        <a href="/" class="back-link">&larr; Terug naar Home</a>
+      </div>
+    ) : (
+    <div id="resultsCount" class="results-count">{woningen.length} woningen</div>
+
+    <div class="homes-grid" id="homesGrid">
+      {(woningen as any[]).map(w => (
+        <a
+          href={w.url}
+          target="_blank"
+          rel="noopener"
+          class="home-card"
+          data-cat={w.category}
+          data-addr={(w.address||"").toLowerCase() + " " + (w.postalCity||"").toLowerCase()}
+        >
+          {w.image && (
+            <div class="home-img">
+              <img src={w.image} alt={w.address} loading="lazy" />
+              {w.status && <span class="home-status">{w.status}</span>}
+            </div>
+          )}
+          <div class="home-body">
+            <span class="home-cat">{w.category}</span>
+            <h3>{w.address}</h3>
+            <p class="home-postal">{w.postalCity}</p>
+            {w.highlight && <p class="home-highlight">{w.highlight}</p>}
+            <div class="home-specs">
+              <span class="home-price">{w.price}</span>
+              {w.area && <span>{w.area}</span>}
+              {w.rooms && <span>{w.rooms} kamers</span>}
+            </div>
+            {w.broker && <p class="home-broker">{w.broker}</p>}
+          </div>
+        </a>
+      ))}
+    </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+const searchInput = document.getElementById("searchInput") as HTMLInputElement;
+const catFilter = document.querySelector(".cat-filter");
+const grid = document.getElementById("homesGrid");
+const count = document.getElementById("resultsCount");
+const cards = grid?.querySelectorAll<HTMLElement>(".home-card") || [];
+let activeCat = "";
+
+function filter() {
+  const q = searchInput.value.toLowerCase();
+  let n = 0;
+  cards.forEach(card => {
+    const catOk = !activeCat || card.dataset.cat === activeCat;
+    const qOk = !q || (card.dataset.addr || "").includes(q);
+    card.style.display = catOk && qOk ? "" : "none";
+    if (catOk && qOk) n++;
+  });
+  if (count) count.textContent = n + " woningen";
+}
+
+catFilter?.addEventListener("click", e => {
+  const btn = (e.target as HTMLElement).closest(".cat-btn") as HTMLElement;
+  if (!btn) return;
+  catFilter.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  activeCat = btn.dataset.cat || "";
+  filter();
+});
+searchInput?.addEventListener("input", filter);
+</script>
+
+<style>
+.container { max-width: 1200px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.breadcrumb { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 1.5rem; }
+.breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.page-header h1 { font-size: 2rem; font-weight: 800; margin: 0 0 0.25rem; }
+.page-header p { color: var(--color-muted); margin: 0; }
+.search-box { padding: 0.5rem 1rem; border: 1px solid var(--color-border); border-radius: 8px; font-size: 0.9rem; width: 280px; outline: none; }
+.search-box:focus { border-color: var(--color-brand); }
+.cat-filter { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.cat-btn { padding: 0.3rem 0.75rem; border-radius: 100px; font-size: 0.78rem; font-weight: 500; border: 1px solid var(--color-border); background: white; color: var(--color-muted); cursor: pointer; transition: all 0.15s; }
+.cat-btn:hover, .cat-btn.active { background: var(--color-brand); color: white; border-color: var(--color-brand); }
+.results-count { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 1rem; }
+.homes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+.home-card { background: white; border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; transition: box-shadow 0.15s, border-color 0.15s; }
+.home-card:hover { border-color: var(--color-brand); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.home-img { position: relative; }
+.home-img img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.home-status { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(0,0,0,0.7); color: white; font-size: 0.68rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; }
+.home-body { padding: 0.875rem; }
+.home-cat { font-size: 0.68rem; color: var(--color-brand); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.home-body h3 { font-size: 0.9rem; font-weight: 700; margin: 0.25rem 0 0; line-height: 1.3; color: var(--color-ink); }
+.home-postal { font-size: 0.78rem; color: var(--color-muted); margin: 0 0 0.4rem; }
+.home-highlight { font-size: 0.75rem; color: var(--color-muted); margin: 0 0 0.5rem; font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.home-specs { display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 0.78rem; color: var(--color-muted); margin-bottom: 0.3rem; }
+.home-price { font-weight: 700; color: var(--color-ink); font-size: 0.9rem; }
+.home-broker { font-size: 0.72rem; color: var(--color-muted); margin: 0; }
+@media (max-width: 1024px) { .homes-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) { .homes-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .homes-grid { grid-template-columns: 1fr; } .search-box { width: 100%; } }
+.empty-state { text-align: center; padding: 4rem 2rem; }
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-state h2 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.5rem; }
+.empty-state p { color: var(--color-muted); margin: 0 0 1.5rem; }
+.back-link { color: var(--color-brand); font-weight: 600; font-size: 0.9rem; }
+</style>
