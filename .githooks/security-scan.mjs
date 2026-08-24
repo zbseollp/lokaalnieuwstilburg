@@ -182,11 +182,27 @@ function isScannable(rel) {
   return !rel.split('/').some(seg => SKIP_DIRS.has(seg));
 }
 
+/**
+ * Rules that are evidence only ALONGSIDE another blocking rule, never on their own.
+ *
+ * A single very long line is normal in generated data and prose content files
+ * (src/data/*.ts, src/content/**\/*.ts). It is meaningful when it appears next to
+ * obfuscation or an implant marker -- and the real payload trips seven other rules,
+ * so nothing is lost by refusing to block on this signal alone.
+ */
+const CORROBORATING_ONLY = new Set(['hidden-long-line']);
+
 function scanText(text, file) {
-  const blocking = [], warnings = [];
-  for (const r of BLOCK) { try { if (r.test(text, file)) blocking.push(r); } catch {} }
+  const hits = [], warnings = [];
+  for (const r of BLOCK) { try { if (r.test(text, file)) hits.push(r); } catch {} }
   for (const r of WARN) { try { if (r.test(text, file)) warnings.push(r); } catch {} }
-  return { blocking, warnings };
+
+  const strong = hits.filter((r) => !CORROBORATING_ONLY.has(r.id));
+  if (strong.length === 0) {
+    // Only corroborating signals fired: report, but do not block.
+    return { blocking: [], warnings: warnings.concat(hits) };
+  }
+  return { blocking: hits, warnings };
 }
 
 /* -------------------------------------------------------------- self-test -- */
