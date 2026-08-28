@@ -64,10 +64,11 @@ function slugify(value) {
 }
 
 function mediaEnv() {
+  const defaultR2 = 'https://pub-d4024ad3e57841448e0ee58a19abe46b.r2.dev';
   return {
-    R2_PUBLIC_URL: process.env.R2_PUBLIC_URL,
-    PUBLIC_R2_URL: process.env.PUBLIC_R2_URL,
-    PUBLIC_PAYLOAD_MEDIA_URL: process.env.PUBLIC_PAYLOAD_MEDIA_URL,
+    R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || defaultR2,
+    PUBLIC_R2_URL: process.env.PUBLIC_R2_URL || process.env.R2_PUBLIC_URL || defaultR2,
+    PUBLIC_PAYLOAD_MEDIA_URL: process.env.PUBLIC_PAYLOAD_MEDIA_URL || defaultR2,
     PUBLIC_MEDIA_URL: process.env.PUBLIC_MEDIA_URL,
     PUBLIC_PAYLOAD_URL: process.env.PUBLIC_PAYLOAD_URL || process.env.PAYLOAD_URL,
     PAYLOAD_URL: process.env.PAYLOAD_URL,

@@ -14,6 +14,24 @@ import {
   splitFrontmatter,
   upsertFrontmatterField,
 } from './lib/blog-frontmatter.mjs';
+import { resolveMediaUrl } from './lib/media-url.mjs';
+
+const DEFAULT_R2_BASE = 'https://pub-d4024ad3e57841448e0ee58a19abe46b.r2.dev';
+
+function mediaEnv() {
+  return {
+    R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || DEFAULT_R2_BASE,
+    PUBLIC_R2_URL: process.env.PUBLIC_R2_URL || process.env.R2_PUBLIC_URL || DEFAULT_R2_BASE,
+    PUBLIC_PAYLOAD_MEDIA_URL: process.env.PUBLIC_PAYLOAD_MEDIA_URL,
+    PUBLIC_MEDIA_URL: process.env.PUBLIC_MEDIA_URL,
+  };
+}
+
+function normalizeHeroUrl(data) {
+  const raw = resolveBlogHeroImage(data);
+  if (!raw) return undefined;
+  return resolveMediaUrl(raw, { env: mediaEnv(), fallback: raw });
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -29,7 +47,7 @@ try {
     const raw = await fs.readFile(filePath, 'utf8');
     const { frontmatter, body, data } = splitFrontmatter(raw);
 
-    const heroImage = resolveBlogHeroImage(data);
+    const heroImage = normalizeHeroUrl(data);
     const category = resolveBlogCategory(data);
 
     let nextYaml = frontmatter;

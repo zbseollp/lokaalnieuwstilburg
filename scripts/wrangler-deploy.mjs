@@ -58,6 +58,53 @@ function runWranglerDeploy() {
   });
 }
 
+async function purgeProductionCache() {
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  if (!token) {
+    console.log("[deploy] Skip cache purge (no CLOUDFLARE_API_TOKEN).");
+    return;
+  }
+
+  const zoneId =
+    process.env.CLOUDFLARE_ZONE_ID ||
+    (await findZoneId(token, process.env.CACHE_PURGE_DOMAIN || "lokaalnieuwstilburg.nl"));
+
+  if (!zoneId) {
+    console.warn("[deploy] Could not resolve Cloudflare zone id for cache purge.");
+    return;
+  }
+
+  const hosts = (process.env.CACHE_PURGE_HOSTS || "lokaalnieuwstilburg.nl,www.lokaalnieuwstilburg.nl")
+    .split(",")
+    .map((host) => host.trim())
+    .filter(Boolean);
+
+  const res = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ hosts }),
+  });
+
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data?.success) {
+    console.warn("[deploy] Cache purge failed:", data?.errors?.[0]?.message || res.statusText);
+    return;
+  }
+
+  console.log(`[deploy] Purged Cloudflare cache for: ${hosts.join(", ")}`);
+}
+
+async function findZoneId(token, domain) {
+  const res = await fetch(`https://api.cloudflare.com/client/v4/zones?name=${encodeURIComponent(domain)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json().catch(() => null);
+  return data?.result?.[0]?.id || "";
+}
+
 async function main() {
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     if (attempt > 1) {
@@ -70,6 +117,7 @@ async function main() {
 
     const { code, output } = await runWranglerDeploy();
     if (code === 0) {
+      await purgeProductionCache();
       return;
     }
 
