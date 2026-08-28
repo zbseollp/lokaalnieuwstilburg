@@ -1,0 +1,85 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+  /** Highlight the first post when it has a hero image (same as /blog/ page 1). */
+  featuredFirst?: boolean;
+}
+
+const { posts, featuredFirst = true } = Astro.props;
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+<div class="posts-grid">
+  {posts.map((post, i) => (
+    <article
+      class:list={[
+        "post-card",
+        featuredFirst && i === 0 && post.data.heroImage && "post-card-featured",
+      ]}
+    >
+      {post.data.heroImage && (
+        <a href={`/${post.id}/`} class="post-card-img">
+          <img
+            src={post.data.heroImage}
+            alt={post.data.title}
+            loading={i < 4 ? "eager" : "lazy"}
+          />
+        </a>
+      )}
+      <div class="post-card-body">
+        <div class="post-meta">
+          <span class="cat-badge">{post.data.category}</span>
+          <time datetime={post.data.pubDate.toISOString()}>{fmtDate(post.data.pubDate)}</time>
+        </div>
+        <h2><a href={`/${post.id}/`}>{post.data.title}</a></h2>
+        {post.data.description && <p>{post.data.description.slice(0, 120)}...</p>}
+        <a href={`/${post.id}/`} class="read-more">Lees verder &rarr;</a>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+.posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.post-card-featured {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  background: #1a1a2e;
+  color: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.post-card-featured .post-card-img img { height: 320px; width: 100%; object-fit: cover; display: block; }
+.post-card-featured .post-card-body { padding: 2rem; }
+.post-card-featured h2 { font-size: 1.5rem; font-weight: 800; margin: 0.5rem 0; color: white; }
+.post-card-featured h2 a { color: white; }
+.post-card-featured h2 a:hover { color: #FCA5A5; }
+.post-card-featured p { color: #D1D5DB; }
+.post-card-featured .post-meta time { color: #9CA3AF; }
+.post-card-featured .read-more { color: #FCA5A5; font-weight: 600; font-size: 0.875rem; }
+.post-card { background: var(--color-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); }
+.post-card-img img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.post-card-body { padding: 1rem; }
+.post-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.4rem; }
+.cat-badge { background: var(--color-brand); color: white; padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; }
+.post-card h2 { font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
+.post-card h2 a:hover { color: var(--color-brand); }
+.post-card p { font-size: 0.8rem; color: var(--color-muted); line-height: 1.5; margin: 0 0 0.6rem; }
+.read-more { font-size: 0.8rem; color: var(--color-brand); font-weight: 600; }
+@media (max-width: 900px) {
+  .posts-grid { grid-template-columns: repeat(2, 1fr); }
+  .post-card-featured { grid-column: span 2; grid-template-columns: 1fr; }
+  .post-card-featured .post-card-img img { height: 200px; }
+}
+@media (max-width: 580px) {
+  .posts-grid { grid-template-columns: 1fr; }
+  .post-card-featured { grid-column: span 1; }
+}
+</style>

@@ -10,6 +10,7 @@
     "build:local": "node scripts/normalize-synced-blog.mjs && astro build",
     "deploy": "npm run build && npx wrangler deploy",
     "cf:deploy": "node scripts/install-wrangler-wrapper.mjs && node scripts/wrangler-deploy.mjs",
+    "purge:cache": "node scripts/purge-cloudflare-cache.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",

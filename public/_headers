@@ -2,7 +2,15 @@
   Cache-Control: public, max-age=0, must-revalidate
   CDN-Cache-Control: no-store
 
+/
+  Cache-Control: public, max-age=0, must-revalidate
+  CDN-Cache-Control: no-store
+
 /blog/*
+  Cache-Control: public, max-age=0, must-revalidate
+  CDN-Cache-Control: no-store
+
+/blog/
   Cache-Control: public, max-age=0, must-revalidate
   CDN-Cache-Control: no-store
 

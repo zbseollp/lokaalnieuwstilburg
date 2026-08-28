@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogPostGrid from "../../components/BlogPostGrid.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths({ paginate }: { paginate: Function }) {
@@ -10,11 +11,6 @@ export async function getStaticPaths({ paginate }: { paginate: Function }) {
 
 const { page } = Astro.props as any;
 const posts = page.data;
-const categories = [...new Set((await getCollection("blog", ({ data }: { data: any }) => !data.draft)).map((p: any) => p.data.category))].sort();
-
-function fmtDate(d: Date) {
-  return d.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
-}
 ---
 <BaseLayout title={`${page.currentPage === 1 ? "Blog pagina LokaalnieuwsTilburg.nl Lees alle berichten" : `Nieuws - pagina ${page.currentPage}`}`} description="Lees alle lokale nieuwsartikelen over Tilburg en omgeving op LokaalnieuwsTilburg.nl.">
   <div class="container">
@@ -24,26 +20,7 @@ function fmtDate(d: Date) {
     <h1 class="page-title">Lokaal Nieuws Tilburg</h1>
     <p class="page-intro">{page.total} artikelen over Tilburg en omgeving.</p>
 
-    <div class="posts-grid">
-      {posts.map((post: any, i: number) => (
-        <article class:list={["post-card", i === 0 && page.currentPage === 1 && post.data.heroImage && "post-card-featured"]}>
-          {post.data.heroImage && (
-            <a href={`/${post.id}/`} class="post-card-img">
-              <img src={post.data.heroImage} alt={post.data.title} loading={i < 4 ? "eager" : "lazy"} />
-            </a>
-          )}
-          <div class="post-card-body">
-            <div class="post-meta">
-              <span class="cat-badge">{post.data.category}</span>
-              <time>{fmtDate(post.data.pubDate)}</time>
-            </div>
-            <h2><a href={`/${post.id}/`}>{post.data.title}</a></h2>
-            {post.data.description && <p>{post.data.description.slice(0, 120)}...</p>}
-            <a href={`/${post.id}/`} class="read-more">Lees verder &rarr;</a>
-          </div>
-        </article>
-      ))}
-    </div>
+    <BlogPostGrid posts={posts} featuredFirst={page.currentPage === 1} />
 
     {page.lastPage > 1 && (
       <nav class="pagination" aria-label="Paginering">
@@ -71,42 +48,10 @@ function fmtDate(d: Date) {
 .breadcrumb a { color: var(--color-muted); } .breadcrumb a:hover { color: var(--color-brand); }
 .page-title { font-size: 2rem; font-weight: 800; margin: 0 0 0.5rem; }
 .page-intro { color: var(--color-muted); margin: 0 0 1.5rem; }
-.cat-filter { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
-.cat-filter-label { font-size: 0.8rem; color: var(--color-muted); font-weight: 600; }
-.cat-tag { padding: 0.3rem 0.8rem; border-radius: 100px; font-size: 0.78rem; font-weight: 500; border: 1px solid var(--color-border); color: var(--color-muted); transition: all 0.15s; }
-.cat-tag:hover, .cat-tag.active { background: var(--color-brand); color: white; border-color: var(--color-brand); }
-.posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-.post-card-featured { grid-column: span 3; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; background: #1a1a2e; color: white; border-radius: 12px; overflow: hidden; }
-.post-card-featured .post-card-img img { height: 320px; width: 100%; object-fit: cover; display: block; }
-.post-card-featured .post-card-body { padding: 2rem; }
-.post-card-featured h2 { font-size: 1.5rem; font-weight: 800; margin: 0.5rem 0; color: white; }
-.post-card-featured h2 a { color: white; }
-.post-card-featured h2 a:hover { color: #FCA5A5; }
-.post-card-featured p { color: #D1D5DB; }
-.post-card-featured .post-meta time { color: #9CA3AF; }
-.post-card-featured .read-more { color: #FCA5A5; font-weight: 600; font-size: 0.875rem; }
-.post-card { background: var(--color-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); }
-.post-card-img img { width: 100%; height: 180px; object-fit: cover; display: block; }
-.post-card-body { padding: 1rem; }
-.post-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.4rem; }
-.cat-badge { background: var(--color-brand); color: white; padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; }
-.post-card h2 { font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
-.post-card h2 a:hover { color: var(--color-brand); }
-.post-card p { font-size: 0.8rem; color: var(--color-muted); line-height: 1.5; margin: 0 0 0.6rem; }
-.read-more { font-size: 0.8rem; color: var(--color-brand); font-weight: 600; }
 .pagination { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-top: 3rem; flex-wrap: wrap; }
 .page-btn { padding: 0.5rem 1rem; border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.85rem; color: var(--color-brand); font-weight: 600; transition: all 0.15s; }
 .page-btn:hover { background: var(--color-brand); color: white; border-color: var(--color-brand); }
 .page-num { width: 2.2rem; height: 2.2rem; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.85rem; font-weight: 500; border: 1px solid var(--color-border); color: var(--color-muted); transition: all 0.15s; }
 .page-num:hover { background: var(--color-surface); color: var(--color-brand); }
 .page-num.active { background: var(--color-brand); color: white; border-color: var(--color-brand); font-weight: 700; }
-@media (max-width: 900px) {
-  .posts-grid { grid-template-columns: repeat(2, 1fr); }
-  .post-card-featured { grid-column: span 2; grid-template-columns: 1fr; }
-  .post-card-featured .post-card-img img { height: 200px; }
-}
-@media (max-width: 580px) {
-  .posts-grid { grid-template-columns: 1fr; }
-  .post-card-featured { grid-column: span 1; }
-}
 </style>
