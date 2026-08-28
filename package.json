@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "sync:blog": "node scripts/sync-blog-from-payload.mjs",
+    "normalize:blog": "node scripts/normalize-synced-blog.mjs",
+    "build": "node scripts/sync-blog-from-payload.mjs && node scripts/normalize-synced-blog.mjs && astro build",
+    "build:local": "node scripts/normalize-synced-blog.mjs && astro build",
     "deploy": "npm run build && npx wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
