@@ -45,6 +45,15 @@ function fmtDate(d: Date) {
 
 <style>
 .posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.post-card { background: var(--color-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); }
+.post-card-img img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.post-card-body { padding: 1rem; }
+.post-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.4rem; }
+.cat-badge { background: var(--color-brand); color: white; padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; }
+.post-card h2 { font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
+.post-card h2 a:hover { color: var(--color-brand); }
+.post-card p { font-size: 0.8rem; color: var(--color-muted); line-height: 1.5; margin: 0 0 0.6rem; }
+.read-more { font-size: 0.8rem; color: var(--color-brand); font-weight: 600; }
 .post-card-featured {
   grid-column: span 3;
   display: grid;
@@ -55,6 +64,7 @@ function fmtDate(d: Date) {
   color: white;
   border-radius: 12px;
   overflow: hidden;
+  border-color: transparent;
 }
 .post-card-featured .post-card-img img { height: 320px; width: 100%; object-fit: cover; display: block; }
 .post-card-featured .post-card-body { padding: 2rem; }
@@ -64,15 +74,6 @@ function fmtDate(d: Date) {
 .post-card-featured p { color: #D1D5DB; }
 .post-card-featured .post-meta time { color: #9CA3AF; }
 .post-card-featured .read-more { color: #FCA5A5; font-weight: 600; font-size: 0.875rem; }
-.post-card { background: var(--color-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); }
-.post-card-img img { width: 100%; height: 180px; object-fit: cover; display: block; }
-.post-card-body { padding: 1rem; }
-.post-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.4rem; }
-.cat-badge { background: var(--color-brand); color: white; padding: 0.15rem 0.5rem; border-radius: 3px; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; }
-.post-card h2 { font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
-.post-card h2 a:hover { color: var(--color-brand); }
-.post-card p { font-size: 0.8rem; color: var(--color-muted); line-height: 1.5; margin: 0 0 0.6rem; }
-.read-more { font-size: 0.8rem; color: var(--color-brand); font-weight: 600; }
 @media (max-width: 900px) {
   .posts-grid { grid-template-columns: repeat(2, 1fr); }
   .post-card-featured { grid-column: span 2; grid-template-columns: 1fr; }
