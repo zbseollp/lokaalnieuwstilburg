@@ -34,6 +34,7 @@ const submenu = [
 
     <nav class="main-nav" id="mainNav" aria-label="Hoofdnavigatie">
       <a href="/" class:list={["nav-link", { active: pathname === "/" }]}>Home</a>
+      <a href="/blog/" class:list={["nav-link", { active: pathname.startsWith("/blog") }]}>Nieuws</a>
       <a href="/112-tilburg/" class:list={["nav-link", { active: pathname.startsWith("/112") }]}>112-melding Tilburg</a>
       <a href="/vacatures-tilburg/" class:list={["nav-link", { active: pathname.startsWith("/vacatures") }]}>Vacatures</a>
       <a href="/weer-tilburg/" class:list={["nav-link", { active: pathname.startsWith("/weer") }]}>Weersverwachting</a>

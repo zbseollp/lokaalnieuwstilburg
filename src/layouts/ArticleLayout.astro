@@ -1,9 +1,9 @@
 ﻿---
 import BaseLayout from "./BaseLayout.astro";
-const { title, description, pubDate, category, author, heroImage } = Astro.props;
+const { title, description, pubDate, category, author, heroImage, imageAlt } = Astro.props;
 const dateStr = new Date(pubDate).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
 ---
-<BaseLayout {title} {description} type="article">
+<BaseLayout {title} {description} image={heroImage} type="article">
   <article class="article-page">
     <div class="container">
       <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -28,7 +28,7 @@ const dateStr = new Date(pubDate).toLocaleDateString("nl-NL", { day: "numeric", 
 
           {heroImage && (
             <figure class="article-hero">
-              <img src={heroImage} alt={title} loading="eager" />
+              <img src={heroImage} alt={imageAlt || title} loading="eager" />
             </figure>
           )}
 
