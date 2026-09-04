@@ -3,6 +3,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import compress from "astro-compress";
+import rehypeRepairMediaUrls from "./src/lib/rehype-repair-media-urls.mjs";
 
 export default defineConfig({
   site: "https://lokaalnieuwstilburg.nl",
@@ -13,6 +14,9 @@ export default defineConfig({
     "/funda/": "/funda-tilburg/",
     "/vacatures/": "/vacatures-tilburg/",
     "/weer/": "/weer-tilburg/",
+  },
+  markdown: {
+    rehypePlugins: [rehypeRepairMediaUrls],
   },
   integrations: [
     mdx(),
