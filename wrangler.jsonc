@@ -1,5 +1,11 @@
 {
   "name": "lokaalnieuwstilburg",
+  "account_id": "54b144d6836138e432688b9d5f4ec8aa",
+  // Expliciet vastgelegd zodat een deploy de domeinkoppeling niet kan opruimen.
+  "routes": [
+    { "pattern": "lokaalnieuwstilburg.nl", "custom_domain": true },
+    { "pattern": "www.lokaalnieuwstilburg.nl", "custom_domain": true }
+  ],
   "compatibility_date": "2025-01-01",
   "assets": {
     "directory": "./dist",
