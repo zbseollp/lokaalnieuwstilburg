@@ -21,7 +21,13 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap(),
-    compress({ CSS: true, HTML: true, JavaScript: true, Image: false }),
+    compress({
+      CSS: true,
+      HTML: true,
+      JavaScript: true,
+      Image: false,
+      exclude: ["**/*.xml"],
+    }),
   ],
   vite: {
     plugins: [tailwindcss()],

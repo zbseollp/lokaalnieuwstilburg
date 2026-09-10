@@ -12,7 +12,14 @@ import {
  * De schema's hieronder accepteren al die vormen; anders valt een heel bericht
  * uit de collectie en verdwijnt het van /blog/.
  */
-const mediaValue = z
+const mediaValue = z.preprocess((val) => {
+  if (val == null || val === "") return undefined;
+  if (typeof val === "number" || (typeof val === "string" && /^\d+$/.test(val.trim()))) {
+    return undefined;
+  }
+  if (val === "[object Object]") return undefined;
+  return val;
+}, z
   .union([
     z.string(),
     z
@@ -24,7 +31,7 @@ const mediaValue = z
       })
       .passthrough(),
   ])
-  .nullish();
+  .nullish());
 
 const optionalText = z.preprocess(
   (val) => (val == null || val === "" ? undefined : String(val)),
@@ -74,6 +81,7 @@ const blog = defineCollection({
       ),
       draft: z.unknown().optional(),
       _status: optionalText,
+      publishStatus: optionalText,
     })
     .passthrough()
     .transform((data) => {

@@ -49,6 +49,20 @@ function fixR2TenantUrl(url, base) {
   }
 }
 
+const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|svg)(\?|#|$)/i;
+
+function looksLikeImageUrl(raw) {
+  try {
+    const parsed = new URL(raw);
+    if (IMAGE_EXT.test(parsed.pathname)) return true;
+    if (parsed.hostname.includes('.r2.dev')) return true;
+    if (parsed.pathname.includes('/media/') || parsed.pathname.includes('/tenants/')) return true;
+    return false;
+  } catch {
+    return IMAGE_EXT.test(raw);
+  }
+}
+
 export function resolveMediaUrl(pathOrUrl, options = {}) {
   const raw = String(pathOrUrl ?? '').trim();
   if (!raw) return options.fallback ?? '';
@@ -56,6 +70,7 @@ export function resolveMediaUrl(pathOrUrl, options = {}) {
   const base = mediaBase(options.env ?? {});
 
   if (/^https?:\/\//i.test(raw)) {
+    if (!looksLikeImageUrl(raw)) return options.fallback ?? '';
     return fixR2TenantUrl(raw, base);
   }
 

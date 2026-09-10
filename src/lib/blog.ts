@@ -25,6 +25,7 @@ export type BlogFrontmatterInput = {
   categories?: (string | number)[];
   draft?: unknown;
   _status?: string;
+  publishStatus?: string;
 };
 
 const DEFAULT_R2_BASE = "https://pub-d4024ad3e57841448e0ee58a19abe46b.r2.dev";
@@ -90,13 +91,30 @@ function fixR2TenantUrl(url: string, base: string): string {
   }
 }
 
+const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|svg)(\?|#|$)/i;
+
+function looksLikeImageUrl(raw: string): boolean {
+  try {
+    const parsed = new URL(raw);
+    if (IMAGE_EXT.test(parsed.pathname)) return true;
+    if (parsed.hostname.includes(".r2.dev")) return true;
+    if (parsed.pathname.includes("/media/") || parsed.pathname.includes("/tenants/")) return true;
+    return false;
+  } catch {
+    return IMAGE_EXT.test(raw);
+  }
+}
+
 /** Maakt van Payload-media een bruikbare URL; lege waarde blijft undefined. */
 export function absolutizeBlogMediaUrl(input: BlogMediaInput): string | undefined {
   const raw = extractMediaPath(input);
   if (!raw) return undefined;
   if (raw === "[object Object]" || /^\d+$/.test(raw)) return undefined;
   if (/^data:/i.test(raw)) return raw;
-  if (/^https?:\/\//i.test(raw)) return fixR2TenantUrl(raw, mediaBase());
+  if (/^https?:\/\//i.test(raw)) {
+    if (!looksLikeImageUrl(raw)) return undefined;
+    return fixR2TenantUrl(raw, mediaBase());
+  }
   if (/^\/\//.test(raw)) return `https:${raw}`;
   if (SITE_RELATIVE.test(raw)) return raw;
   return `${mediaBase()}/${tenantObjectKey(raw)}`;
@@ -135,17 +153,41 @@ export function resolveBlogCategory(data: BlogFrontmatterInput): string {
   return labels.find((label) => !/^\d+$/.test(label)) || "Nieuws";
 }
 
+const UNPUBLISHED_STATUS = new Set([
+  "draft",
+  "private",
+  "pending",
+  "trash",
+  "auto-draft",
+  "inherit",
+  "future",
+  "scheduled",
+  "unpublished",
+]);
+
+/** WordPress uses `publish`; Payload uses `published`. Both are live. */
+const PUBLISHED_STATUS = new Set(["publish", "published", "live", "public"]);
+
 /**
- * Publicatiefilter: draft kan een boolean of string zijn en Payload zet
- * `_status` op "draft" zolang een bericht niet gepubliceerd is.
+ * Publicatiefilter.
+ * Live-status wint van een achtergebleven WP `draft: true` in extra-frontmatter.
+ * WordPress `_status: publish` en Payload `published` zijn beide live.
  */
 export function isDraftFrontmatter(data: BlogFrontmatterInput): boolean {
+  const status = String(data._status ?? data.publishStatus ?? "")
+    .trim()
+    .toLowerCase();
+  if (PUBLISHED_STATUS.has(status)) return false;
+  if (UNPUBLISHED_STATUS.has(status)) return true;
+
   const draft = data.draft;
   if (draft === true) return true;
   if (typeof draft === "string" && ["true", "draft", "yes", "1"].includes(draft.trim().toLowerCase())) {
     return true;
   }
-  const status = String(data._status ?? "").trim().toLowerCase();
-  if (status && status !== "published") return true;
   return false;
+}
+
+export function isPublishedFrontmatter(data: BlogFrontmatterInput): boolean {
+  return !isDraftFrontmatter(data);
 }

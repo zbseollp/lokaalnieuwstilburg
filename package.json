@@ -6,16 +6,18 @@
     "dev": "astro dev",
     "sync:blog": "node scripts/sync-blog-from-payload.mjs",
     "normalize:blog": "node scripts/normalize-synced-blog.mjs",
-    "build": "node scripts/assert-blog-count.mjs && node scripts/install-wrangler-wrapper.mjs && node scripts/sync-blog-from-payload.mjs && node scripts/normalize-synced-blog.mjs && astro build",
-    "build:local": "node scripts/normalize-synced-blog.mjs && astro build",
+    "build": "node scripts/assert-blog-count.mjs && node scripts/install-wrangler-wrapper.mjs && node scripts/sync-blog-from-payload.mjs && node scripts/normalize-synced-blog.mjs && node scripts/sanitize-blog.mjs && node scripts/assert-publish-ready.mjs && astro build",
+    "build:local": "node scripts/normalize-synced-blog.mjs && node scripts/sanitize-blog.mjs && astro build",
+    "sanitize:blog": "node scripts/sanitize-blog.mjs",
+    "assert:blog": "node scripts/assert-blog-count.mjs",
+    "assert:publish": "node scripts/assert-publish-ready.mjs",
     "deploy": "npm run build && npx wrangler deploy",
     "cf:deploy": "node scripts/install-wrangler-wrapper.mjs && node scripts/wrangler-deploy.mjs",
     "purge:cache": "node scripts/purge-cloudflare-cache.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "prepare": "node .githooks/install.mjs",
-    "assert:blog": "node scripts/assert-blog-count.mjs"
+    "prepare": "node .githooks/install.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

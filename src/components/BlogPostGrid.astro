@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { postHref } from "../lib/routes";
 
 interface Props {
   posts: CollectionEntry<"blog">[];
@@ -22,7 +23,7 @@ function fmtDate(d: Date) {
       ]}
     >
       {post.data.heroImage && (
-        <a href={`/${post.id}/`} class="post-card-img">
+        <a href={postHref(post.id)} class="post-card-img">
           <img
             src={post.data.heroImage}
             alt={post.data.title}
@@ -35,9 +36,9 @@ function fmtDate(d: Date) {
           <span class="cat-badge">{post.data.category}</span>
           <time datetime={post.data.pubDate.toISOString()}>{fmtDate(post.data.pubDate)}</time>
         </div>
-        <h2><a href={`/${post.id}/`}>{post.data.title}</a></h2>
+        <h2><a href={postHref(post.id)}>{post.data.title}</a></h2>
         {post.data.description && <p>{post.data.description.slice(0, 120)}...</p>}
-        <a href={`/${post.id}/`} class="read-more">Lees verder &rarr;</a>
+        <a href={postHref(post.id)} class="read-more">Lees verder &rarr;</a>
       </div>
     </article>
   ))}

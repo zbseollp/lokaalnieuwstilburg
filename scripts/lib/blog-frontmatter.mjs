@@ -3,19 +3,53 @@
  */
 
 export function resolveBlogHeroImage(data) {
-  const hero = data.heroImage?.trim();
-  if (hero) return hero;
-  const featured = data.featuredImage?.trim();
-  if (featured) return featured;
-  const image = data.image?.trim();
-  return image || undefined;
+  const pick = (value) => {
+    if (typeof value === 'string') return value.trim() || undefined;
+    if (value && typeof value === 'object') {
+      for (const key of ['url', 'src', 'filename']) {
+        const candidate = value[key];
+        if (typeof candidate === 'string' && candidate.trim()) return candidate.trim();
+      }
+    }
+    return undefined;
+  };
+  return pick(data.heroImage) || pick(data.featuredImage) || pick(data.image);
+}
+
+const UNPUBLISHED_STATUS = new Set([
+  'draft',
+  'private',
+  'pending',
+  'trash',
+  'auto-draft',
+  'inherit',
+  'future',
+  'scheduled',
+  'unpublished',
+]);
+const PUBLISHED_STATUS = new Set(['publish', 'published', 'live', 'public']);
+
+/** WordPress `_status: publish` and Payload `published` are both live. */
+export function isPublishedFrontmatter(data) {
+  const status = String(data?._status ?? data?.publishStatus ?? '')
+    .trim()
+    .toLowerCase();
+  if (PUBLISHED_STATUS.has(status)) return true;
+  if (UNPUBLISHED_STATUS.has(status)) return false;
+
+  const draft = data?.draft;
+  if (draft === true) return false;
+  if (typeof draft === 'string' && ['true', 'draft', 'yes', '1'].includes(draft.trim().toLowerCase())) {
+    return false;
+  }
+  return true;
 }
 
 export function resolveBlogCategory(data) {
-  const single = data.category?.trim();
-  if (single) return single;
-  const fromList = data.categories?.map((c) => String(c).trim()).find(Boolean);
-  return fromList || 'Nieuws';
+  const labels = [data.category, ...(Array.isArray(data.categories) ? data.categories : [])]
+    .map((item) => (item == null ? '' : String(item).trim()))
+    .filter(Boolean);
+  return labels.find((label) => !/^\d+$/.test(label)) || 'Nieuws';
 }
 
 export function splitFrontmatter(raw) {
@@ -112,6 +146,7 @@ export function rebuildMarkdown(data, body) {
       lines.push(`${key}: ${value}`);
       continue;
     }
+    if (typeof value === 'object') continue;
     lines.push(`${key}: ${yamlEscape(String(value))}`);
   }
   lines.push('---', '');

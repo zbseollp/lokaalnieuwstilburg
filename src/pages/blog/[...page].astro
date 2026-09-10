@@ -1,11 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogPostGrid from "../../components/BlogPostGrid.astro";
-import { getCollection } from "astro:content";
+import { getBlogPosts } from "../../lib/posts";
 
 export async function getStaticPaths({ paginate }: { paginate: Function }) {
-  const allPosts = await getCollection("blog", ({ data }: { data: any }) => !data.draft);
-  const posts = allPosts.sort((a: any, b: any) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const posts = await getBlogPosts();
   return paginate(posts, { pageSize: 12 });
 }
 

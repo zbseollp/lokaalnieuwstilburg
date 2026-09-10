@@ -1,8 +1,10 @@
 ﻿---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import ArticleLayout from "../layouts/ArticleLayout.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import bedrijven from "../data/bedrijven.json";
+import { getBlogPosts } from "../lib/posts";
+import { isReservedSlug } from "../lib/routes";
 
 function makeSlug(str: string): string {
   if (!str) return 'onbekend';
@@ -22,18 +24,25 @@ export async function getStaticPaths() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'onbekend';
   }
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
-  const blogPaths = posts.map(post => ({
-    params: { slug: post.id },
-    props: { type: 'blog' as const, post, bedrijf: null },
-  }));
+  const posts = await getBlogPosts();
+  const used = new Set<string>();
+  const blogPaths = posts.flatMap((post) => {
+    const slug = post.id;
+    if (!slug || used.has(slug) || isReservedSlug(slug)) return [];
+    used.add(slug);
+    return [{ params: { slug }, props: { type: 'blog' as const, post, bedrijf: null } }];
+  });
   const seen = new Map<string, number>();
-  const bedrijfPaths = (bedrijven as any[]).map((b) => {
+  const bedrijfPaths = (bedrijven as any[]).flatMap((b) => {
     const base = ms(b.title);
+    if (!base || isReservedSlug(base)) return [];
     const count = seen.get(base) ?? 0;
     seen.set(base, count + 1);
     const slug = count === 0 ? base : `${base}-${count + 1}`;
-    return { params: { slug }, props: { type: 'bedrijf' as const, bedrijf: b, post: null } };
+    // Artikelen winnen van de bedrijvengids op dezelfde URL, anders faalt de build.
+    if (used.has(slug) || isReservedSlug(slug)) return [];
+    used.add(slug);
+    return [{ params: { slug }, props: { type: 'bedrijf' as const, bedrijf: b, post: null } }];
   });
   return [...blogPaths, ...bedrijfPaths];
 }

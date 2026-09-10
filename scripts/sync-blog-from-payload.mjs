@@ -16,11 +16,11 @@ import { fileURLToPath } from 'node:url';
 import {
   rebuildMarkdown,
   removeFrontmatterField,
+  isPublishedFrontmatter,
   resolveBlogCategory,
   resolveBlogHeroImage,
   splitFrontmatter,
   upsertFrontmatterField,
-  yamlEscape,
 } from './lib/blog-frontmatter.mjs';
 import { extractMediaPath, resolveMediaUrl } from './lib/media-url.mjs';
 
@@ -248,17 +248,32 @@ function collectionPageUrl(base, collection, page, variant, tenantSlug) {
   url.searchParams.set('limit', '100');
   url.searchParams.set('page', String(page));
   url.searchParams.set('sort', '-updatedAt');
-  if (variant === 'publish-status') {
+  // Always scope to this tenant first — a super-admin key otherwise returns
+  // other sites' posts and this script used to delete local articles.
+  if (variant !== 'open') {
+    url.searchParams.set('where[tenant.slug][equals]', tenantSlug);
+  }
+  if (variant === 'tenant-published' || variant === 'publish-status') {
     url.searchParams.set('where[publishStatus][equals]', 'published');
     url.searchParams.set('where[pubDate][less_than_equal]', new Date().toISOString());
-  }
-  if (variant === 'tenant-slug') {
-    url.searchParams.set('where[tenant.slug][equals]', tenantSlug);
   }
   return url;
 }
 
-const QUERY_VARIANTS = ['publish-status', 'tenant-slug', 'published', 'open'];
+const QUERY_VARIANTS = ['tenant-published', 'tenant-slug', 'publish-status', 'open'];
+
+function tenantSlugOf(doc) {
+  const tenant = doc?.tenant;
+  if (!tenant) return '';
+  if (typeof tenant === 'string') return tenant;
+  return String(tenant.slug || tenant.name || '').trim();
+}
+
+function isPayloadDocLive(doc) {
+  const slug = tenantSlugOf(doc);
+  if (slug && slug !== TENANT) return false;
+  return isPublishedFrontmatter(doc);
+}
 
 async function fetchJson(url, headers) {
   const res = await fetch(url, { headers });
@@ -420,6 +435,14 @@ export async function syncBlogFromPayload() {
     return;
   }
 
+  // Jenkins already ran tenant-cli sync before `npm run build`. Running this
+  // again with PAYLOAD_API_KEY from SITE_ROOT/.env can fetch the wrong page of
+  // posts and delete the article the client just published.
+  if (process.env.CI === 'true' || process.env.CI === '1') {
+    console.log('[sync:blog] Skipped in CI (tenant-cli sync is the source of truth).');
+    return;
+  }
+
   const apiKey = process.env.PAYLOAD_API_KEY || process.env.PAYLOAD_TOKEN || '';
   if (!apiKey) {
     console.log('[sync:blog] No PAYLOAD_API_KEY — skip (Jenkins/tenant-cli sync may have already run).');
@@ -439,7 +462,7 @@ export async function syncBlogFromPayload() {
     if (docs.length) break;
   }
 
-  const mapped = docs.map(mapDoc).filter(Boolean);
+  const mapped = docs.filter(isPayloadDocLive).map(mapDoc).filter(Boolean);
   const existingCount = await readExistingSlugs();
 
   if (!mapped.length) {
@@ -473,13 +496,17 @@ export async function syncBlogFromPayload() {
     }
   }
 
-  // Remove unpublished posts (Payload is source of truth when sync runs with API key).
-  for (const file of await fs.readdir(BLOG_DIR)) {
-    if (!file.endsWith('.md') && !file.endsWith('.mdx')) continue;
-    const slug = file.replace(/\.(md|mdx)$/, '');
-    if (!syncedSlugs.has(slug)) {
-      await fs.unlink(path.join(BLOG_DIR, file));
-      console.log(`[sync:blog] removed ${slug}`);
+  // Merge only — never delete local articles. Jenkins tenant-cli already
+  // cleans + rewrites from Payload; deleting here dropped live posts when the
+  // API returned a partial or mixed-tenant page.
+  if (process.env.PAYLOAD_SYNC_DELETE === '1') {
+    for (const file of await fs.readdir(BLOG_DIR)) {
+      if (!file.endsWith('.md') && !file.endsWith('.mdx')) continue;
+      const slug = file.replace(/\.(md|mdx)$/, '');
+      if (!syncedSlugs.has(slug)) {
+        await fs.unlink(path.join(BLOG_DIR, file));
+        console.log(`[sync:blog] removed ${slug}`);
+      }
     }
   }
 

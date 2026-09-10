@@ -1,12 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getBlogPosts } from "../../lib/posts";
+import { postHref } from "../../lib/routes";
 import bedrijven from "../../data/bedrijven.json";
 
-const posts = await getCollection("blog", ({ data }) => !data.draft);
-const sortedPosts = posts.sort((a, b) =>
-  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
-);
+const sortedPosts = await getBlogPosts();
 
 function makeSlug(str: string): string {
   if (!str) return 'onbekend';
@@ -82,7 +80,7 @@ const categoriePaginas = [
       <h2>Nieuwsberichten ({sortedPosts.length})</h2>
       <ul>
         {sortedPosts.map(post => (
-          <li><a href={`/${post.id}/`}>{post.data.title}</a></li>
+          <li><a href={postHref(post.id)}>{post.data.title}</a></li>
         ))}
       </ul>
     </div>

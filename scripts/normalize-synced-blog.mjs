@@ -8,6 +8,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  isPublishedFrontmatter,
   rebuildMarkdown,
   resolveBlogCategory,
   resolveBlogHeroImage,
@@ -61,13 +62,23 @@ try {
       nextYaml = upsertFrontmatterField(nextYaml, 'category', category);
       changed = true;
     }
+    // Payload/WP extras: `_status: publish` must stay live (not treated as draft).
+    if (isPublishedFrontmatter(data) && data.draft !== false) {
+      nextYaml = upsertFrontmatterField(nextYaml, 'draft', false);
+      changed = true;
+    }
 
     if (!changed) {
       skipped += 1;
       continue;
     }
 
-    const nextData = { ...data, ...(heroImage ? { heroImage } : {}), category };
+    const nextData = {
+      ...data,
+      ...(heroImage ? { heroImage } : {}),
+      category,
+      ...(isPublishedFrontmatter(data) ? { draft: false } : {}),
+    };
     const next = rebuildMarkdown(nextData, body);
     if (next !== raw.replace(/\r\n/g, '\n')) {
       await fs.writeFile(filePath, next, 'utf8');
