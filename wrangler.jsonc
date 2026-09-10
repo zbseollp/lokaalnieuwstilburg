@@ -1,6 +1,9 @@
 {
   "name": "lokaalnieuwstilburg",
   "account_id": "54b144d6836138e432688b9d5f4ec8aa",
+  // Keep the workers.dev hostname so Payload can show a smoke-test URL
+  // like https://lokaalnieuwstilburg.twilight-breeze-d943.workers.dev
+  "workers_dev": true,
   // Expliciet vastgelegd zodat een deploy de domeinkoppeling niet kan opruimen.
   "routes": [
     { "pattern": "lokaalnieuwstilburg.nl", "custom_domain": true },
